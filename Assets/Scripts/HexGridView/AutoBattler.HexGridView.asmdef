@@ -1,0 +1,16 @@
+{
+    "name": "AutoBattler.HexGridView",
+    "rootNamespace": "AutoBattler.HexGrid.Unity",
+    "references": [
+        "AutoBattler.HexGrid"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

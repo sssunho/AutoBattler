@@ -1,0 +1,24 @@
+{
+    "name": "AutoBattler.HexGrid.Tests",
+    "rootNamespace": "AutoBattler.HexGrid.Tests",
+    "references": [
+        "AutoBattler.HexGrid",
+        "AutoBattler.HexGridView"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

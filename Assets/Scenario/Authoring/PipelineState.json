@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 2,
+  "status": "NotStarted",
+  "mode": "Guided",
+  "newTagPolicy": "ProposeAndPause",
+  "phase": "Initialization",
+  "request": null,
+  "approvals": {
+    "narrativePlan": false,
+    "mainArcStructure": false,
+    "finalePlan": false,
+    "newTags": false,
+    "blueprintSample": false
+  },
+  "artifacts": {
+    "narrativePlan": null,
+    "eventSlotIndex": null,
+    "blueprintDirectory": "Authoring/Blueprints",
+    "arcCatalogBlueprint": null,
+    "epilogueBlueprint": null,
+    "eventDirectory": "Events/Generated",
+    "arcCatalog": null,
+    "epilogueFragments": null,
+    "validationDirectory": "Authoring/ValidationReports"
+  },
+  "batches": {
+    "blueprintBatchSize": 8,
+    "eventBatchSize": 15,
+    "completedBlueprintBatches": [],
+    "pendingBlueprintBatches": [],
+    "completedEventBatches": [],
+    "pendingEventBatches": []
+  },
+  "validation": {
+    "lastStage": null,
+    "passed": null,
+    "report": null,
+    "checks": {
+      "eventSlotIndex": null,
+      "arcReachability": null,
+      "finaleCoverage": null,
+      "epilogueCoverage": null,
+      "finalOutput": null
+    }
+  },
+  "issues": []
+}

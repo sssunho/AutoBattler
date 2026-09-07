@@ -1,0 +1,152 @@
+[
+  {
+    "id": "riverside_lost_payroll",
+    "title": "사라진 품삯 상자",
+    "description": "RiversideTown의 붐비는 하역장에서 운송 수레가 전복된 뒤 노동자들의 임금 상자가 사라졌다. 용병단이 배수로에서 상자를 찾아내자 주변 상인과 인부들의 시선이 일제히 쏠린다. 상자를 온전히 돌려줄지, 회수한 몫을 요구할지 결정해야 한다.",
+    "arcId": null,
+    "arcType": "Standalone",
+    "eventType": "Normal",
+    "arcStage": null,
+    "conditions": {
+      "requiredTags": [],
+      "forbiddenTags": [],
+      "fameMin": null,
+      "fameMax": 8,
+      "reputationMin": -1,
+      "reputationMax": 2,
+      "moneyMin": null,
+      "moneyMax": null,
+      "resolvedEventCountMin": null,
+      "resolvedEventCountMax": null,
+      "locations": [
+        3
+      ]
+    },
+    "resolution": {
+      "type": "Choice",
+      "choices": [
+        {
+          "id": "return_payroll",
+          "text": "임금 상자를 온전히 돌려준다.",
+          "conditions": {
+            "requiredTags": [],
+            "forbiddenTags": [],
+            "moneyMin": null
+          },
+          "result": {
+            "text": "용병단은 상자를 책임자에게 그대로 넘겼다. 노동자들은 제때 품삯을 받았고, 이를 지켜본 이들은 용병단의 이름과 책임감 있는 행동을 주변에 전했다.",
+            "battle": false,
+            "promotion": false,
+            "effects": {
+              "addTags": [],
+              "removeTags": [],
+              "fameChange": 1,
+              "reputationChange": 1,
+              "moneyChange": 0,
+              "arcTransition": null,
+              "runTransition": null
+            }
+          }
+        },
+        {
+          "id": "take_payroll",
+          "text": "회수 대가로 임금 일부를 챙긴다.",
+          "conditions": {
+            "requiredTags": [],
+            "forbiddenTags": [],
+            "moneyMin": null
+          },
+          "result": {
+            "text": "용병단은 회수 대가를 내세워 임금 일부를 가져갔다. 수중의 골드는 늘었지만, 줄어든 품삯을 마주한 인부들과 상인들은 용병단을 탐욕스럽다고 여겼다.",
+            "battle": false,
+            "promotion": false,
+            "effects": {
+              "addTags": [],
+              "removeTags": [],
+              "fameChange": 0,
+              "reputationChange": -1,
+              "moneyChange": 15,
+              "arcTransition": null,
+              "runTransition": null
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "crossroad_injured_courier",
+    "title": "여관에 쓰러진 운송인",
+    "description": "CrossroadInn에 피투성이가 된 운송인이 비틀거리며 들어와 쓰러졌다. 여관 주인은 인근 치료사를 부를 수 있지만 먼저 비용을 마련해야 한다고 말한다. 용병단은 골드를 써서 전문 치료를 받게 할지, 가진 물품으로 기본 응급처치만 할지 결정해야 한다.",
+    "arcId": null,
+    "arcType": "Standalone",
+    "eventType": "Normal",
+    "arcStage": null,
+    "conditions": {
+      "requiredTags": [],
+      "forbiddenTags": [],
+      "fameMin": null,
+      "fameMax": null,
+      "reputationMin": null,
+      "reputationMax": null,
+      "moneyMin": null,
+      "moneyMax": null,
+      "resolvedEventCountMin": null,
+      "resolvedEventCountMax": null,
+      "locations": [
+        14
+      ]
+    },
+    "resolution": {
+      "type": "Choice",
+      "choices": [
+        {
+          "id": "pay_treatment_cost",
+          "text": "40 골드를 지불해 치료사를 부른다.",
+          "conditions": {
+            "requiredTags": [],
+            "forbiddenTags": [],
+            "moneyMin": 40
+          },
+          "result": {
+            "text": "용병단이 치료비를 건네자 치료사가 곧 여관에 도착했다. 운송인은 필요한 처치를 받고 안전하게 회복할 시간을 얻었다.",
+            "battle": false,
+            "promotion": false,
+            "effects": {
+              "addTags": [],
+              "removeTags": [],
+              "fameChange": 0,
+              "reputationChange": 0,
+              "moneyChange": -40,
+              "arcTransition": null,
+              "runTransition": null
+            }
+          }
+        },
+        {
+          "id": "offer_basic_aid",
+          "text": "돈을 쓰지 않고 기본 응급처치를 한다.",
+          "conditions": {
+            "requiredTags": [],
+            "forbiddenTags": [],
+            "moneyMin": null
+          },
+          "result": {
+            "text": "용병단은 휴대품으로 위급한 상처를 안정시켰다. 당장의 위기는 넘겼지만, 전문 치료를 받지 못한 운송인은 여관에서 더 오래 쉬어야 했다.",
+            "battle": false,
+            "promotion": false,
+            "effects": {
+              "addTags": [],
+              "removeTags": [],
+              "fameChange": 0,
+              "reputationChange": 0,
+              "moneyChange": 0,
+              "arcTransition": null,
+              "runTransition": null
+            }
+          }
+        }
+      ]
+    }
+  }
+]

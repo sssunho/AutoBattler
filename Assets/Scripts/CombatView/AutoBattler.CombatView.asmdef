@@ -1,0 +1,19 @@
+{
+    "name": "AutoBattler.CombatView",
+    "rootNamespace": "AutoBattler.Combat.Unity",
+    "references": [
+        "AutoBattler.Combat",
+        "AutoBattler.HexGrid",
+        "AutoBattler.HexGridView",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
