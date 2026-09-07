@@ -8,14 +8,17 @@ namespace AutoBattler.Combat
         public int Id { get; }
         public Team Team { get; }
         public HexCoordinate Coordinate { get; internal set; }
-        public int AttackRange { get; }
-        public float MoveSpeed { get; }
-        public int MaxHealth { get; }
+        public BattleUnitStat Stat { get; }
+        public int AttackRange => Stat.AttackRange;
+        public float MoveSpeed => Stat.MoveSpeed;
+        public int MaxHealth => Stat.MaxHealth;
+        public int MaxMana => Stat.MaxMana;
         public int CurrentHealth { get; internal set; }
-        public int AttackDamage { get; }
-        public float AttackAnimationDuration { get; }
-        public float AttackHitNormalizedTime { get; }
-        public float AttackCooldownDuration { get; }
+        public int CurrentMana { get; internal set; }
+        public int AttackDamage => Stat.AttackDamage;
+        public float AttackAnimationDuration => Stat.AttackAnimationDuration;
+        public float AttackHitNormalizedTime => Stat.AttackHitNormalizedTime;
+        public float AttackCooldownDuration => Stat.AttackCooldownDuration;
         public float MoveGauge { get; internal set; }
         public bool IsAlive { get; internal set; }
         public BattleAttackPhase AttackPhase { get; internal set; }
@@ -67,60 +70,34 @@ namespace AutoBattler.Combat
             float attackAnimationDuration,
             float attackHitNormalizedTime,
             float attackCooldownDuration)
+            : this(
+                id,
+                team,
+                coordinate,
+                new BattleUnitStat(
+                    maxHealth,
+                    0,
+                    moveSpeed,
+                    attackDamage,
+                    attackRange,
+                    attackAnimationDuration,
+                    attackHitNormalizedTime,
+                    attackCooldownDuration))
         {
-            if (attackRange < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(attackRange));
-            }
+        }
 
-            if (moveSpeed < 0f || float.IsNaN(moveSpeed) || float.IsInfinity(moveSpeed))
-            {
-                throw new ArgumentOutOfRangeException(nameof(moveSpeed));
-            }
-
-            if (maxHealth <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(maxHealth));
-            }
-
-            if (attackDamage < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(attackDamage));
-            }
-
-            if (attackAnimationDuration <= 0f
-                || float.IsNaN(attackAnimationDuration)
-                || float.IsInfinity(attackAnimationDuration))
-            {
-                throw new ArgumentOutOfRangeException(nameof(attackAnimationDuration));
-            }
-
-            if (attackHitNormalizedTime <= 0f
-                || attackHitNormalizedTime > 1f
-                || float.IsNaN(attackHitNormalizedTime)
-                || float.IsInfinity(attackHitNormalizedTime))
-            {
-                throw new ArgumentOutOfRangeException(nameof(attackHitNormalizedTime));
-            }
-
-            if (attackCooldownDuration < 0f
-                || float.IsNaN(attackCooldownDuration)
-                || float.IsInfinity(attackCooldownDuration))
-            {
-                throw new ArgumentOutOfRangeException(nameof(attackCooldownDuration));
-            }
-
+        public BattleUnit(
+            int id,
+            Team team,
+            HexCoordinate coordinate,
+            BattleUnitStat stat)
+        {
             Id = id;
             Team = team;
             Coordinate = coordinate;
-            AttackRange = attackRange;
-            MoveSpeed = moveSpeed;
-            MaxHealth = maxHealth;
-            CurrentHealth = maxHealth;
-            AttackDamage = attackDamage;
-            AttackAnimationDuration = attackAnimationDuration;
-            AttackHitNormalizedTime = attackHitNormalizedTime;
-            AttackCooldownDuration = attackCooldownDuration;
+            Stat = new BattleUnitStat(stat ?? throw new ArgumentNullException(nameof(stat)));
+            CurrentHealth = Stat.MaxHealth;
+            CurrentMana = 0;
             MoveGauge = 0f;
             IsAlive = true;
         }

@@ -11,37 +11,13 @@ namespace AutoBattler.Combat.Unity
         HexMapView _mapView;
 
         [SerializeField]
-        BattleUnitView _playerUnitPrefab;
+        UnitDefinition _playerUnitDefinition;
 
         [SerializeField]
-        BattleUnitView _enemyUnitPrefab;
+        UnitDefinition _enemyUnitDefinition;
 
         [SerializeField]
         Transform _unitViewRoot;
-
-        [SerializeField]
-        [Min(0)]
-        int _attackRange = 1;
-
-        [SerializeField]
-        [Min(0f)]
-        float _moveSpeed = 1f;
-
-        [SerializeField]
-        [Min(1)]
-        int _maxHealth = 100;
-
-        [SerializeField]
-        [Min(0)]
-        int _attackDamage = 10;
-
-        [SerializeField]
-        [Range(0.0001f, 1f)]
-        float _attackHitNormalizedTime = 0.4f;
-
-        [SerializeField]
-        [Min(0f)]
-        float _attackCooldownDuration = 0.4f;
 
         [SerializeField]
         [Min(0.0001f)]
@@ -103,45 +79,24 @@ namespace AutoBattler.Combat.Unity
         internal bool TryCreatePlacement(Team team, HexCoordinate coordinate, out BattlePlacement placement)
         {
             placement = default;
-            BattleUnitView prefab = GetPrefab(team);
-            float attackAnimationDuration = prefab != null ? prefab.AttackAnimationDuration : 0f;
+            UnitDefinition definition = GetDefinition(team);
 
             if (_mapView == null || !_mapView.IsValid(coordinate)
-                || prefab == null || _attackRange < 0
-                || _moveSpeed < 0f || float.IsNaN(_moveSpeed) || float.IsInfinity(_moveSpeed)
-                || _maxHealth <= 0 || _attackDamage < 0
-                || attackAnimationDuration <= 0f
-                || float.IsNaN(attackAnimationDuration)
-                || float.IsInfinity(attackAnimationDuration)
-                || _attackHitNormalizedTime <= 0f
-                || _attackHitNormalizedTime > 1f
-                || float.IsNaN(_attackHitNormalizedTime)
-                || float.IsInfinity(_attackHitNormalizedTime)
-                || _attackCooldownDuration < 0f
-                || float.IsNaN(_attackCooldownDuration)
-                || float.IsInfinity(_attackCooldownDuration))
+                || definition == null || !definition.IsValid())
             {
                 return false;
             }
 
-            placement = new BattlePlacement(
-                team,
-                coordinate,
-                _attackRange,
-                _moveSpeed,
-                _maxHealth,
-                _attackDamage,
-                attackAnimationDuration,
-                _attackHitNormalizedTime,
-                _attackCooldownDuration);
+            placement = new BattlePlacement(definition, team, coordinate);
             return true;
         }
 
         internal BattleUnitView CreatePlacementView(BattlePlacement placement)
         {
-            BattleUnitView prefab = GetPrefab(placement.Team);
+            UnitDefinition definition = placement.Definition;
+            BattleUnitView prefab = definition != null ? definition.ViewPrefab : null;
 
-            if (prefab == null || _mapView == null)
+            if (definition == null || !definition.IsValid() || prefab == null || _mapView == null)
             {
                 return null;
             }
@@ -162,30 +117,35 @@ namespace AutoBattler.Combat.Unity
             }
 
             BattleSimulation nextSimulation = new BattleSimulation(_mapView.Width, _mapView.Height);
+            List<BattleUnit> spawnedUnits = new List<BattleUnit>(placements.Count);
 
             for (int i = 0; i < placements.Count; i++)
             {
                 BattlePlacement placement = placements[i];
+                UnitDefinition definition = placement.Definition;
 
-                if (GetPrefab(placement.Team) == null
-                    || !nextSimulation.TrySpawnUnit(placement.Team, placement.Coordinate,
-                        placement.AttackRange, placement.MoveSpeed, placement.MaxHealth,
-                        placement.AttackDamage, placement.AttackAnimationDuration,
-                        placement.AttackHitNormalizedTime, placement.AttackCooldownDuration, out _))
+                if (definition == null || !definition.IsValid()
+                    || !nextSimulation.TrySpawnUnit(
+                        placement.Team,
+                        placement.Coordinate,
+                        definition.Stat.CreateBattleUnitStat(),
+                        out BattleUnit unit))
                 {
                     return false;
                 }
+
+                spawnedUnits.Add(unit);
             }
 
             try
             {
                 Transform parent = _unitViewRoot != null ? _unitViewRoot : transform;
 
-                foreach (BattleUnit unit in nextSimulation.Board.Units)
+                for (int i = 0; i < placements.Count; i++)
                 {
-                    BattleUnitView view = Instantiate(GetPrefab(unit.Team), parent);
+                    BattleUnitView view = Instantiate(placements[i].Definition.ViewPrefab, parent);
                     _unitViews.Add(view);
-                    view.Bind(unit, _mapView);
+                    view.Bind(spawnedUnits[i], _mapView);
                 }
 
                 _movementTickAccumulator = 0f;
@@ -218,14 +178,14 @@ namespace AutoBattler.Combat.Unity
             _unitViews.Clear();
         }
 
-        BattleUnitView GetPrefab(Team team)
+        UnitDefinition GetDefinition(Team team)
         {
             switch (team)
             {
                 case Team.Player:
-                    return _playerUnitPrefab;
+                    return _playerUnitDefinition;
                 case Team.Enemy:
-                    return _enemyUnitPrefab;
+                    return _enemyUnitDefinition;
                 default:
                     return null;
             }

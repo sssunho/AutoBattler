@@ -29,9 +29,6 @@ namespace AutoBattler.Combat.Unity
         BattleAttackPhase _displayedAttackPhase;
 
         public BattleUnit Unit => _unit;
-        internal float AttackAnimationDuration => _attackAnimationClip != null
-            ? _attackAnimationClip.length
-            : 0f;
 
         void Awake()
         {

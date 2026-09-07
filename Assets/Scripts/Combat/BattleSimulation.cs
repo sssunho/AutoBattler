@@ -27,6 +27,35 @@ namespace AutoBattler.Combat
         public bool TrySpawnUnit(
             Team team,
             HexCoordinate coordinate,
+            BattleUnitStat stat,
+            out BattleUnit unit)
+        {
+            unit = null;
+
+            if (stat == null || !stat.IsValid())
+            {
+                return false;
+            }
+
+            BattleUnit createdUnit = new BattleUnit(
+                _nextUnitId,
+                team,
+                coordinate,
+                stat);
+
+            if (!_board.TryPlace(createdUnit, coordinate))
+            {
+                return false;
+            }
+
+            _nextUnitId++;
+            unit = createdUnit;
+            return true;
+        }
+
+        public bool TrySpawnUnit(
+            Team team,
+            HexCoordinate coordinate,
             int attackRange,
             float moveSpeed,
             out BattleUnit unit)
@@ -100,26 +129,16 @@ namespace AutoBattler.Combat
                 return false;
             }
 
-            BattleUnit createdUnit = new BattleUnit(
-                _nextUnitId,
-                team,
-                coordinate,
-                attackRange,
-                moveSpeed,
+            BattleUnitStat stat = new BattleUnitStat(
                 maxHealth,
+                0,
+                moveSpeed,
                 attackDamage,
+                attackRange,
                 attackAnimationDuration,
                 attackHitNormalizedTime,
                 attackCooldownDuration);
-
-            if (!_board.TryPlace(createdUnit, coordinate))
-            {
-                return false;
-            }
-
-            _nextUnitId++;
-            unit = createdUnit;
-            return true;
+            return TrySpawnUnit(team, coordinate, stat, out unit);
         }
 
         public bool TryApplyBasicAttackDamage(BattleUnit attacker, BattleUnit target)
