@@ -10,10 +10,19 @@ namespace AutoBattler.Combat.Unity
     [RequireComponent(typeof(BattleRunner))]
     public sealed class BattlePlacementEditor : MonoBehaviour
     {
-        static readonly Rect _panelRect = new Rect(10f, 10f, 270f, 210f);
+        static readonly Rect _panelRect = new Rect(10f, 10f, 270f, 250f);
 
         [SerializeField]
         Camera _inputCamera;
+
+        [SerializeField]
+        UnitDefinition _warriorDefinition;
+
+        [SerializeField]
+        UnitDefinition _mageDefinition;
+
+        [SerializeField]
+        UnitDefinition _archerDefinition;
 
         readonly List<BattlePlacement> _placements = new List<BattlePlacement>();
         readonly List<BattleUnitView> _placementViews = new List<BattleUnitView>();
@@ -22,6 +31,8 @@ namespace AutoBattler.Combat.Unity
         BattleRunner _runner;
         HexMapView _mapView;
         Team _selectedTeam = Team.Player;
+        UnitDefinition _selectedDefinition;
+        string _selectedUnitName = "Warrior";
         string _widthInput;
         string _heightInput;
         string _status = string.Empty;
@@ -31,6 +42,7 @@ namespace AutoBattler.Combat.Unity
         {
             _runner = GetComponent<BattleRunner>();
             _mapView = _runner.MapView;
+            _selectedDefinition = _warriorDefinition;
 
             if (_inputCamera == null)
             {
@@ -104,11 +116,26 @@ namespace AutoBattler.Combat.Unity
             {
                 if (Input.GetKeyDown(KeyCode.Alpha1))
                 {
-                    _selectedTeam = Team.Enemy;
+                    _selectedTeam = Team.Player;
                 }
                 else if (Input.GetKeyDown(KeyCode.Alpha2))
                 {
-                    _selectedTeam = Team.Player;
+                    _selectedTeam = Team.Enemy;
+                }
+                else if (Input.GetKeyDown(KeyCode.Q))
+                {
+                    _selectedDefinition = _warriorDefinition;
+                    _selectedUnitName = "Warrior";
+                }
+                else if (Input.GetKeyDown(KeyCode.W))
+                {
+                    _selectedDefinition = _mageDefinition;
+                    _selectedUnitName = "Mage";
+                }
+                else if (Input.GetKeyDown(KeyCode.E))
+                {
+                    _selectedDefinition = _archerDefinition;
+                    _selectedUnitName = "Archer";
                 }
             }
 
@@ -143,9 +170,18 @@ namespace AutoBattler.Combat.Unity
                     RemovePlacement(index);
                 }
             }
-            else if (!_placementIndices.ContainsKey(coordinate)
-                && _runner.TryCreatePlacement(_selectedTeam, coordinate, out BattlePlacement placement))
+            else if (!_placementIndices.ContainsKey(coordinate))
             {
+                if (!_runner.TryCreatePlacement(
+                    _selectedDefinition,
+                    _selectedTeam,
+                    coordinate,
+                    out BattlePlacement placement))
+                {
+                    _status = "Cannot place: check selected unit definition.";
+                    return;
+                }
+
                 BattleUnitView view = _runner.CreatePlacementView(placement);
 
                 if (view != null)
@@ -153,6 +189,7 @@ namespace AutoBattler.Combat.Unity
                     _placementIndices.Add(coordinate, _placements.Count);
                     _placements.Add(placement);
                     _placementViews.Add(view);
+                    _status = string.Empty;
                 }
             }
         }
@@ -166,7 +203,9 @@ namespace AutoBattler.Combat.Unity
 
             GUILayout.BeginArea(_panelRect, GUI.skin.box);
             GUILayout.Label(_battleMode ? "Battle | F2: Restore placement" : "Placement | F1: Start battle");
-            GUILayout.Label(_selectedTeam == Team.Player ? "Team: Player (2)" : "Team: Enemy (1)");
+            GUILayout.Label(_selectedTeam == Team.Player ? "Team: Player (1)" : "Team: Enemy (2)");
+            GUILayout.Label($"Unit: {_selectedUnitName}");
+            GUILayout.Label("Q: Warrior | W: Mage | E: Archer");
             bool previousEnabled = GUI.enabled;
             GUI.enabled = previousEnabled && !_battleMode;
             GUILayout.BeginHorizontal();

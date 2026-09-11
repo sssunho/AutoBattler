@@ -11,12 +11,6 @@ namespace AutoBattler.Combat.Unity
         HexMapView _mapView;
 
         [SerializeField]
-        UnitDefinition _playerUnitDefinition;
-
-        [SerializeField]
-        UnitDefinition _enemyUnitDefinition;
-
-        [SerializeField]
         Transform _unitViewRoot;
 
         [SerializeField]
@@ -76,10 +70,13 @@ namespace AutoBattler.Combat.Unity
             StopBattle();
         }
 
-        internal bool TryCreatePlacement(Team team, HexCoordinate coordinate, out BattlePlacement placement)
+        internal bool TryCreatePlacement(
+            UnitDefinition definition,
+            Team team,
+            HexCoordinate coordinate,
+            out BattlePlacement placement)
         {
             placement = default;
-            UnitDefinition definition = GetDefinition(team);
 
             if (_mapView == null || !_mapView.IsValid(coordinate)
                 || definition == null || !definition.IsValid())
@@ -176,19 +173,6 @@ namespace AutoBattler.Combat.Unity
             }
 
             _unitViews.Clear();
-        }
-
-        UnitDefinition GetDefinition(Team team)
-        {
-            switch (team)
-            {
-                case Team.Player:
-                    return _playerUnitDefinition;
-                case Team.Enemy:
-                    return _enemyUnitDefinition;
-                default:
-                    return null;
-            }
         }
 
         bool IsValidTickInterval()
