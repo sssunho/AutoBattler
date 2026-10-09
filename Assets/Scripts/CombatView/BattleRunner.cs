@@ -3,221 +3,373 @@ using AutoBattler.HexGrid;
 using AutoBattler.HexGrid.Unity;
 using UnityEngine;
 
-namespace AutoBattler.Combat.Unity
+namespace RaggedBanner.Combat.Unity
 {
+    [DisallowMultipleComponent]
     public sealed class BattleRunner : MonoBehaviour
     {
         [SerializeField]
         HexMapView _mapView;
 
         [SerializeField]
-        Transform _unitViewRoot;
+        HexCharacterView[] _initialUnits = new HexCharacterView[0];
 
         [SerializeField]
-        [Min(0.0001f)]
-        float _movementTickInterval = 0.1f;
+        Transform _unitViewRoot;
 
-        readonly List<BattleUnitView> _unitViews = new List<BattleUnitView>();
+        readonly Dictionary<int, HexCharacterView> _views = new Dictionary<int, HexCharacterView>();
+        readonly HashSet<int> _spawnedViewIds = new HashSet<int>();
+        readonly List<int> _destroyedUnitIds = new List<int>();
 
         BattleSimulation _simulation;
-        float _movementTickAccumulator;
+        HexMovementStep _step;
+        float _hexSize;
+        bool _hasStep;
 
-        public BattleSimulation Simulation => _simulation;
-        internal HexMapView MapView => _mapView;
-        internal bool IsRunning => _simulation != null;
+        public HexMapView MapView => _mapView;
+        public bool IsInitialized => _simulation != null;
+        public bool IsBusy => _simulation != null && _simulation.IsBusy;
+        public bool IsMovementPaused => _simulation != null && _simulation.IsMovementPaused;
+        public int? CurrentUnitId => _simulation != null ? _simulation.CurrentUnitId : null;
 
-        void Update()
+        void Start()
         {
-            if (_simulation == null || !IsValidTickInterval())
+            if (!IsMapValid())
+            {
+                StopWithError("BattleRunner requires a non-empty HexMapView with a positive finite hex size.");
+                return;
+            }
+
+            _simulation = new BattleSimulation(_mapView.Width, _mapView.Height);
+            _hexSize = _mapView.HexSize;
+
+            if (_initialUnits == null)
             {
                 return;
             }
 
-            for (int i = 0; i < _unitViews.Count; i++)
+            for (int i = 0; i < _initialUnits.Length; i++)
             {
-                if (_unitViews[i] != null)
+                if (!TryRegisterCharacter(_initialUnits[i], out _))
                 {
-                    _unitViews[i].AdvanceMovement(Time.deltaTime);
+                    StopWithError("BattleRunner could not register an initial unit. Check its view, starting position, and overlapping or duplicate units.");
+                    return;
                 }
             }
+        }
 
-            _movementTickAccumulator += Time.deltaTime;
-            bool advanced = false;
-
-            while (_movementTickAccumulator >= _movementTickInterval)
+        void Update()
+        {
+            if (_simulation == null)
             {
-                _simulation.TickMovement(_movementTickInterval);
-                _movementTickAccumulator -= _movementTickInterval;
-                advanced = true;
+                return;
             }
 
-            _simulation.TickAttacks(Time.deltaTime);
-            RemoveDeadUnitViews();
-
-            if (advanced)
+            if (!IsConfigurationValid())
             {
-                SyncUnitViews();
+                StopWithError("BattleRunner stopped because its map became invalid or its size changed.");
+                return;
             }
+
+            RemoveDestroyedUnits();
+            AdvanceMovement(Time.deltaTime);
         }
 
-        void OnDisable()
+        public bool TryRegisterCharacter(HexCharacterView view, out int unitId)
         {
-            StopBattle();
-        }
+            unitId = 0;
 
-        void OnDestroy()
-        {
-            StopBattle();
-        }
-
-        internal bool TryCreatePlacement(
-            UnitDefinition definition,
-            Team team,
-            HexCoordinate coordinate,
-            out BattlePlacement placement)
-        {
-            placement = default;
-
-            if (_mapView == null || !_mapView.IsValid(coordinate)
-                || definition == null || !definition.IsValid())
+            if (!CanAcceptCommands() || view == null || view.IsInitialized
+                || !view.isActiveAndEnabled || _simulation.IsBusy)
             {
                 return false;
             }
 
-            placement = new BattlePlacement(definition, team, coordinate);
-            return true;
+            if (!TryFindNearestCoordinate(view.transform.position, out HexCoordinate coordinate))
+            {
+                Debug.LogError("BattleRunner could not find a valid starting hex for the character.", view);
+                return false;
+            }
+
+            return TryRegisterAt(view, coordinate, false, out unitId);
         }
 
-        internal BattleUnitView CreatePlacementView(BattlePlacement placement)
+        public bool TrySpawnCharacter(HexCharacterView prefab, HexCoordinate coordinate, out int unitId)
         {
-            UnitDefinition definition = placement.Definition;
-            BattleUnitView prefab = definition != null ? definition.ViewPrefab : null;
+            unitId = 0;
 
-            if (definition == null || !definition.IsValid() || prefab == null || _mapView == null)
+            if (!CanAcceptCommands() || prefab == null || _simulation.IsBusy
+                || !_simulation.Board.IsValid(coordinate) || _simulation.Board.IsOccupied(coordinate))
             {
-                return null;
+                return false;
             }
 
             Transform parent = _unitViewRoot != null ? _unitViewRoot : transform;
-            BattleUnitView view = Instantiate(prefab, parent);
-            view.ShowPlacement(placement.Coordinate, _mapView);
-            return view;
+            HexCharacterView view = Instantiate(prefab, parent);
+
+            if (TryRegisterAt(view, coordinate, true, out unitId))
+            {
+                return true;
+            }
+
+            view.gameObject.SetActive(false);
+            Destroy(view.gameObject);
+            return false;
         }
 
-        internal bool TryStartBattle(IReadOnlyList<BattlePlacement> placements)
+        public bool TryGetCharacter(int unitId, out HexCharacter character)
         {
-            if (IsRunning || !isActiveAndEnabled || _mapView == null
-                || _mapView.Width <= 0 || _mapView.Height <= 0
-                || placements == null || !IsValidTickInterval())
+            character = null;
+            return _simulation != null && _simulation.Board.TryGetUnit(unitId, out character);
+        }
+
+        public bool TryMove(int unitId, HexCoordinate destination)
+        {
+            return CanAcceptCommands() && _views.TryGetValue(unitId, out HexCharacterView view)
+                && view != null && view.IsReady && _simulation.TryMove(unitId, destination);
+        }
+
+        public bool TryEndTurn(int unitId)
+        {
+            return CanAcceptCommands() && _simulation.TryEndTurn(unitId);
+        }
+
+        public bool PauseMovement()
+        {
+            return CanAcceptCommands() && _simulation.PauseMovement();
+        }
+
+        public bool ResumeMovement()
+        {
+            return CanAcceptCommands() && _simulation.ResumeMovement();
+        }
+
+        public void CancelMovement()
+        {
+            if (_simulation == null)
+            {
+                return;
+            }
+
+            int unitId = _simulation.MovingUnitId;
+            _simulation.CancelMovement();
+            _hasStep = false;
+
+            if (_views.TryGetValue(unitId, out HexCharacterView view) && view != null)
+            {
+                view.SnapToCharacter();
+            }
+        }
+
+        public bool RemoveCharacter(int unitId)
+        {
+            if (_simulation == null || !_views.TryGetValue(unitId, out HexCharacterView view))
             {
                 return false;
             }
 
-            BattleSimulation nextSimulation = new BattleSimulation(_mapView.Width, _mapView.Height);
-            List<BattleUnit> spawnedUnits = new List<BattleUnit>(placements.Count);
-
-            for (int i = 0; i < placements.Count; i++)
+            if (_simulation.MovingUnitId == unitId)
             {
-                BattlePlacement placement = placements[i];
-                UnitDefinition definition = placement.Definition;
-
-                if (definition == null || !definition.IsValid()
-                    || !nextSimulation.TrySpawnUnit(
-                        placement.Team,
-                        placement.Coordinate,
-                        definition.Stat.CreateBattleUnitStat(),
-                        out BattleUnit unit))
-                {
-                    return false;
-                }
-
-                spawnedUnits.Add(unit);
+                CancelMovement();
             }
 
-            try
-            {
-                Transform parent = _unitViewRoot != null ? _unitViewRoot : transform;
+            _simulation.RemoveUnit(unitId);
+            _views.Remove(unitId);
+            bool spawned = _spawnedViewIds.Remove(unitId);
 
-                for (int i = 0; i < placements.Count; i++)
+            if (view != null)
+            {
+                view.Unbind();
+                view.gameObject.SetActive(false);
+
+                if (spawned)
                 {
-                    BattleUnitView view = Instantiate(placements[i].Definition.ViewPrefab, parent);
-                    _unitViews.Add(view);
-                    view.Bind(spawnedUnits[i], _mapView);
-                }
-
-                _movementTickAccumulator = 0f;
-                _simulation = nextSimulation;
-                return true;
-            }
-            catch
-            {
-                StopBattle();
-                throw;
-            }
-        }
-
-        internal void StopBattle()
-        {
-            _simulation = null;
-            _movementTickAccumulator = 0f;
-
-            for (int i = 0; i < _unitViews.Count; i++)
-            {
-                BattleUnitView view = _unitViews[i];
-
-                if (view != null)
-                {
-                    view.gameObject.SetActive(false);
                     Destroy(view.gameObject);
                 }
             }
 
-            _unitViews.Clear();
+            return true;
         }
 
-        bool IsValidTickInterval()
+        bool TryRegisterAt(HexCharacterView view, HexCoordinate coordinate, bool spawned, out int unitId)
         {
-            return _movementTickInterval > 0f
-                && !float.IsNaN(_movementTickInterval)
-                && !float.IsInfinity(_movementTickInterval);
-        }
+            unitId = 0;
 
-        void RemoveDeadUnitViews()
-        {
-            for (int i = _unitViews.Count - 1; i >= 0; i--)
+            if (!_simulation.TrySpawnUnit(coordinate, out HexCharacter character))
             {
-                BattleUnitView unitView = _unitViews[i];
+                return false;
+            }
 
-                if (unitView == null)
+            if (!view.TryBind(character, _mapView))
+            {
+                _simulation.RemoveUnit(character.Id);
+                return false;
+            }
+
+            _views.Add(character.Id, view);
+
+            if (spawned)
+            {
+                _spawnedViewIds.Add(character.Id);
+            }
+
+            unitId = character.Id;
+            return true;
+        }
+
+        void AdvanceMovement(float remainingTime)
+        {
+            if (!_simulation.IsBusy)
+            {
+                return;
+            }
+
+            HexCharacterView view = _views[_simulation.MovingUnitId];
+
+            if (!view.IsReady)
+            {
+                CancelMovement();
+                return;
+            }
+
+            while (remainingTime > 0f)
+            {
+                if (!_hasStep)
                 {
-                    _unitViews.RemoveAt(i);
-                    continue;
+                    if (!_simulation.TryAdvanceMovement(out _step))
+                    {
+                        view.SetIdle();
+                        return;
+                    }
+
+                    _hasStep = true;
+
+                    if (!view.TryPlayMovement(_step))
+                    {
+                        CancelMovement();
+                        return;
+                    }
                 }
 
-                BattleUnit unit = unitView.Unit;
+                remainingTime = view.AdvanceMovement(remainingTime);
 
-                if (unit == null || unit.IsAlive)
+                if (view.IsPresenting)
                 {
-                    continue;
+                    return;
                 }
 
-                unitView.gameObject.SetActive(false);
-                Destroy(unitView.gameObject);
-                _unitViews.RemoveAt(i);
+                _hasStep = false;
+                _simulation.TryCompleteMovementStep(_step.Id);
+
+                if (!_simulation.IsBusy || _simulation.IsMovementPaused)
+                {
+                    view.SetIdle();
+                    return;
+                }
             }
         }
 
-        void SyncUnitViews()
+        void RemoveDestroyedUnits()
         {
-            for (int i = 0; i < _unitViews.Count; i++)
-            {
-                BattleUnitView unitView = _unitViews[i];
+            _destroyedUnitIds.Clear();
 
-                if (unitView != null)
+            foreach (KeyValuePair<int, HexCharacterView> entry in _views)
+            {
+                if (entry.Value == null)
                 {
-                    unitView.SyncMovement(_movementTickInterval);
+                    _destroyedUnitIds.Add(entry.Key);
                 }
             }
+
+            for (int i = 0; i < _destroyedUnitIds.Count; i++)
+            {
+                RemoveCharacter(_destroyedUnitIds[i]);
+            }
+        }
+
+        bool TryFindNearestCoordinate(Vector3 position, out HexCoordinate coordinate)
+        {
+            coordinate = default;
+            double nearestDistance = double.PositiveInfinity;
+
+            for (int r = 0; r < _mapView.Height; r++)
+            {
+                for (int q = 0; q < _mapView.Width; q++)
+                {
+                    HexCoordinate candidate = new HexCoordinate(q, r);
+                    Vector3 center = _mapView.AxialToWorld(candidate);
+                    double x = (double)center.x - position.x;
+                    double y = (double)center.y - position.y;
+                    double z = (double)center.z - position.z;
+                    double distance = x * x + y * y + z * z;
+
+                    if (distance < nearestDistance)
+                    {
+                        nearestDistance = distance;
+                        coordinate = candidate;
+                    }
+                }
+            }
+
+            return !double.IsPositiveInfinity(nearestDistance);
+        }
+
+        bool CanAcceptCommands()
+        {
+            return isActiveAndEnabled && _simulation != null && IsConfigurationValid();
+        }
+
+        bool IsConfigurationValid()
+        {
+            return IsMapValid() && _mapView.Width == _simulation.Board.Width
+                && _mapView.Height == _simulation.Board.Height && _mapView.HexSize == _hexSize;
+        }
+
+        bool IsMapValid()
+        {
+            return _mapView != null && _mapView.Width > 0 && _mapView.Height > 0
+                && _mapView.HexSize > 0f && !float.IsNaN(_mapView.HexSize) && !float.IsInfinity(_mapView.HexSize);
+        }
+
+        void OnDisable()
+        {
+            CancelMovement();
+        }
+
+        void OnDestroy()
+        {
+            ReleaseBattle();
+        }
+
+        void ReleaseBattle()
+        {
+            CancelMovement();
+
+            foreach (KeyValuePair<int, HexCharacterView> entry in _views)
+            {
+                if (entry.Value != null)
+                {
+                    entry.Value.Unbind();
+
+                    if (_spawnedViewIds.Contains(entry.Key))
+                    {
+                        entry.Value.gameObject.SetActive(false);
+                        Destroy(entry.Value.gameObject);
+                    }
+                }
+            }
+
+            _views.Clear();
+            _spawnedViewIds.Clear();
+            _destroyedUnitIds.Clear();
+            _simulation = null;
+        }
+
+        void StopWithError(string message)
+        {
+            Debug.LogError(message, this);
+            enabled = false;
+            ReleaseBattle();
         }
     }
 }

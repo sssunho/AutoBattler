@@ -1,6 +1,6 @@
 namespace AutoBattler.Combat
 {
-    public enum BattleAttackPhase
+    public enum AutoBattlerBattleAttackPhase
     {
         None,
         Animation,

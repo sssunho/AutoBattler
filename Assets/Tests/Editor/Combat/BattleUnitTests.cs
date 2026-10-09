@@ -8,7 +8,7 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void Constructor_CopiesStatAndInitializesResources()
         {
-            BattleUnitStat source = new BattleUnitStat(
+            AutoBattlerBattleUnitStat source = new AutoBattlerBattleUnitStat(
                 250,
                 80,
                 2f,
@@ -18,9 +18,9 @@ namespace AutoBattler.Combat.Tests
                 0.5f,
                 0.3f);
 
-            BattleUnit unit = new BattleUnit(
+            AutoBattlerBattleUnit unit = new AutoBattlerBattleUnit(
                 1,
-                Team.Player,
+                AutoBattlerTeam.Player,
                 new HexCoordinate(0, 0),
                 source);
 
@@ -37,13 +37,13 @@ namespace AutoBattler.Combat.Tests
             Assert.That(unit.AttackCooldownDuration, Is.EqualTo(0.3f));
         }
 
-        [TestCase(BattleAttackPhase.Animation)]
-        [TestCase(BattleAttackPhase.Cooldown)]
-        public void IsAttacking_IsTrueForActiveAttackPhases(BattleAttackPhase phase)
+        [TestCase(AutoBattlerBattleAttackPhase.Animation)]
+        [TestCase(AutoBattlerBattleAttackPhase.Cooldown)]
+        public void IsAttacking_IsTrueForActiveAttackPhases(AutoBattlerBattleAttackPhase phase)
         {
-            BattleUnit unit = new BattleUnit(
+            AutoBattlerBattleUnit unit = new AutoBattlerBattleUnit(
                 1,
-                Team.Player,
+                AutoBattlerTeam.Player,
                 new HexCoordinate(0, 0),
                 1,
                 1f,

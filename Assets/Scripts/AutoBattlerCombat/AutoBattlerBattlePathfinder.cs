@@ -3,7 +3,7 @@ using AutoBattler.HexGrid;
 
 namespace AutoBattler.Combat
 {
-    public sealed class BattlePathfinder
+    public sealed class AutoBattlerBattlePathfinder
     {
         static readonly HexDirection[] _directions =
         {
@@ -18,14 +18,14 @@ namespace AutoBattler.Combat
         readonly Queue<HexCoordinate> _frontier = new Queue<HexCoordinate>();
         readonly Dictionary<HexCoordinate, int> _distances = new Dictionary<HexCoordinate, int>();
         readonly List<HexCoordinate> _destinations = new List<HexCoordinate>();
-        readonly List<BattleUnit> _validTargets = new List<BattleUnit>();
+        readonly List<AutoBattlerBattleUnit> _validTargets = new List<AutoBattlerBattleUnit>();
 
         public bool TryFindPathToAttackPosition(
-            BattleBoard board,
-            BattleUnit mover,
-            IReadOnlyList<BattleUnit> targets,
+            AutoBattlerBattleBoard board,
+            AutoBattlerBattleUnit mover,
+            IReadOnlyList<AutoBattlerBattleUnit> targets,
             List<HexCoordinate> result,
-            out BattleUnit target)
+            out AutoBattlerBattleUnit target)
         {
             target = null;
 
@@ -52,7 +52,7 @@ namespace AutoBattler.Combat
 
             for (int i = 0; i < targets.Count; i++)
             {
-                BattleUnit candidate = targets[i];
+                AutoBattlerBattleUnit candidate = targets[i];
 
                 if (!CanSearch(board, mover, candidate))
                 {
@@ -109,7 +109,7 @@ namespace AutoBattler.Combat
 
                     _distances.Add(neighbor, dist);
 
-                    BattleUnit candidate = FindTargetInRange(neighbor, mover.AttackRange);
+                    AutoBattlerBattleUnit candidate = FindTargetInRange(neighbor, mover.AttackRange);
 
                     if (candidate != null)
                     {
@@ -142,13 +142,13 @@ namespace AutoBattler.Combat
             return false;
         }
 
-        BattleUnit FindTargetInRange(HexCoordinate coordinate, int attackRange)
+        AutoBattlerBattleUnit FindTargetInRange(HexCoordinate coordinate, int attackRange)
         {
-            BattleUnit target = null;
+            AutoBattlerBattleUnit target = null;
 
             for (int i = 0; i < _validTargets.Count; i++)
             {
-                BattleUnit candidate = _validTargets[i];
+                AutoBattlerBattleUnit candidate = _validTargets[i];
 
                 if (coordinate.DistanceTo(candidate.Coordinate) <= attackRange
                     && (target == null || candidate.Id > target.Id))
@@ -160,7 +160,7 @@ namespace AutoBattler.Combat
             return target;
         }
 
-        static bool CanSearch(BattleBoard board, BattleUnit mover, BattleUnit target)
+        static bool CanSearch(AutoBattlerBattleBoard board, AutoBattlerBattleUnit mover, AutoBattlerBattleUnit target)
         {
             if (board == null
                 || mover == null
@@ -176,11 +176,11 @@ namespace AutoBattler.Combat
             return IsPlacedUnit(board, mover) && IsPlacedUnit(board, target);
         }
 
-        static bool IsPlacedUnit(BattleBoard board, BattleUnit unit)
+        static bool IsPlacedUnit(AutoBattlerBattleBoard board, AutoBattlerBattleUnit unit)
         {
-            return board.TryGetUnit(unit.Id, out BattleUnit registeredUnit)
+            return board.TryGetUnit(unit.Id, out AutoBattlerBattleUnit registeredUnit)
                 && ReferenceEquals(registeredUnit, unit)
-                && board.TryGetUnit(unit.Coordinate, out BattleUnit occupyingUnit)
+                && board.TryGetUnit(unit.Coordinate, out AutoBattlerBattleUnit occupyingUnit)
                 && ReferenceEquals(occupyingUnit, unit);
         }
 

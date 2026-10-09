@@ -8,7 +8,7 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void Constructor_CreatesBoardWithRequestedSize()
         {
-            BattleSimulation simulation = new BattleSimulation(4, 3);
+            AutoBattlerBattleSimulation simulation = new AutoBattlerBattleSimulation(4, 3);
 
             Assert.That(simulation.Board.Width, Is.EqualTo(4));
             Assert.That(simulation.Board.Height, Is.EqualTo(3));
@@ -17,38 +17,38 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TrySpawnUnit_CreatesAndPlacesUnit()
         {
-            BattleSimulation simulation = new BattleSimulation(3, 2);
+            AutoBattlerBattleSimulation simulation = new AutoBattlerBattleSimulation(3, 2);
             HexCoordinate coordinate = new HexCoordinate(2, 1);
 
             bool spawned = simulation.TrySpawnUnit(
-                Team.Player,
+                AutoBattlerTeam.Player,
                 coordinate,
                 1,
                 1f,
-                out BattleUnit unit);
+                out AutoBattlerBattleUnit unit);
 
             Assert.That(spawned, Is.True);
             Assert.That(unit, Is.Not.Null);
             Assert.That(unit.Id, Is.EqualTo(1));
-            Assert.That(unit.Team, Is.EqualTo(Team.Player));
+            Assert.That(unit.Team, Is.EqualTo(AutoBattlerTeam.Player));
             Assert.That(unit.Coordinate, Is.EqualTo(coordinate));
-            Assert.That(simulation.Board.TryGetUnit(coordinate, out BattleUnit occupant), Is.True);
+            Assert.That(simulation.Board.TryGetUnit(coordinate, out AutoBattlerBattleUnit occupant), Is.True);
             Assert.That(occupant, Is.SameAs(unit));
         }
 
         [Test]
         public void TrySpawnUnit_InitializesCombatStats()
         {
-            BattleSimulation simulation = new BattleSimulation(2, 1);
+            AutoBattlerBattleSimulation simulation = new AutoBattlerBattleSimulation(2, 1);
 
             bool spawned = simulation.TrySpawnUnit(
-                Team.Player,
+                AutoBattlerTeam.Player,
                 new HexCoordinate(0, 0),
                 1,
                 1f,
                 250,
                 35,
-                out BattleUnit unit);
+                out AutoBattlerBattleUnit unit);
 
             Assert.That(spawned, Is.True);
             Assert.That(unit.MaxHealth, Is.EqualTo(250));
@@ -57,7 +57,7 @@ namespace AutoBattler.Combat.Tests
             Assert.That(unit.AttackAnimationDuration, Is.EqualTo(1.6f));
             Assert.That(unit.AttackHitNormalizedTime, Is.EqualTo(0.4f));
             Assert.That(unit.AttackCooldownDuration, Is.EqualTo(0.4f));
-            Assert.That(unit.AttackPhase, Is.EqualTo(BattleAttackPhase.None));
+            Assert.That(unit.AttackPhase, Is.EqualTo(AutoBattlerBattleAttackPhase.None));
             Assert.That(unit.AttackTarget, Is.Null);
             Assert.That(unit.AttackElapsed, Is.Zero);
             Assert.That(unit.IsAttacking, Is.False);
@@ -66,23 +66,23 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryApplyBasicAttackDamage_UsesAttackDamageAndRemovesKilledTarget()
         {
-            BattleSimulation simulation = new BattleSimulation(2, 1);
+            AutoBattlerBattleSimulation simulation = new AutoBattlerBattleSimulation(2, 1);
             simulation.TrySpawnUnit(
-                Team.Player,
+                AutoBattlerTeam.Player,
                 new HexCoordinate(0, 0),
                 1,
                 1f,
                 100,
                 40,
-                out BattleUnit attacker);
+                out AutoBattlerBattleUnit attacker);
             simulation.TrySpawnUnit(
-                Team.Enemy,
+                AutoBattlerTeam.Enemy,
                 new HexCoordinate(1, 0),
                 1,
                 1f,
                 30,
                 10,
-                out BattleUnit target);
+                out AutoBattlerBattleUnit target);
 
             bool applied = simulation.TryApplyBasicAttackDamage(attacker, target);
 
@@ -96,20 +96,20 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TrySpawnUnit_AssignsSequentialIdsToSuccessfulSpawns()
         {
-            BattleSimulation simulation = new BattleSimulation(3, 1);
+            AutoBattlerBattleSimulation simulation = new AutoBattlerBattleSimulation(3, 1);
 
             simulation.TrySpawnUnit(
-                Team.Player,
+                AutoBattlerTeam.Player,
                 new HexCoordinate(0, 0),
                 1,
                 1f,
-                out BattleUnit first);
+                out AutoBattlerBattleUnit first);
             simulation.TrySpawnUnit(
-                Team.Enemy,
+                AutoBattlerTeam.Enemy,
                 new HexCoordinate(2, 0),
                 1,
                 1f,
-                out BattleUnit second);
+                out AutoBattlerBattleUnit second);
 
             Assert.That(first.Id, Is.EqualTo(1));
             Assert.That(second.Id, Is.EqualTo(2));
@@ -118,27 +118,27 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TrySpawnUnit_DoesNotConsumeIdWhenPlacementFails()
         {
-            BattleSimulation simulation = new BattleSimulation(2, 1);
+            AutoBattlerBattleSimulation simulation = new AutoBattlerBattleSimulation(2, 1);
             HexCoordinate occupiedCoordinate = new HexCoordinate(0, 0);
             simulation.TrySpawnUnit(
-                Team.Player,
+                AutoBattlerTeam.Player,
                 occupiedCoordinate,
                 1,
                 1f,
-                out BattleUnit first);
+                out AutoBattlerBattleUnit first);
 
             bool failed = simulation.TrySpawnUnit(
-                Team.Enemy,
+                AutoBattlerTeam.Enemy,
                 occupiedCoordinate,
                 1,
                 1f,
-                out BattleUnit rejected);
+                out AutoBattlerBattleUnit rejected);
             simulation.TrySpawnUnit(
-                Team.Enemy,
+                AutoBattlerTeam.Enemy,
                 new HexCoordinate(1, 0),
                 1,
                 1f,
-                out BattleUnit second);
+                out AutoBattlerBattleUnit second);
 
             Assert.That(failed, Is.False);
             Assert.That(rejected, Is.Null);
@@ -149,36 +149,36 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TrySpawnUnit_RejectsInvalidStats()
         {
-            BattleSimulation simulation = new BattleSimulation(2, 1);
+            AutoBattlerBattleSimulation simulation = new AutoBattlerBattleSimulation(2, 1);
 
             bool invalidRange = simulation.TrySpawnUnit(
-                Team.Player,
+                AutoBattlerTeam.Player,
                 new HexCoordinate(0, 0),
                 -1,
                 1f,
-                out BattleUnit rangeUnit);
+                out AutoBattlerBattleUnit rangeUnit);
             bool invalidSpeed = simulation.TrySpawnUnit(
-                Team.Player,
+                AutoBattlerTeam.Player,
                 new HexCoordinate(0, 0),
                 1,
                 float.NaN,
-                out BattleUnit speedUnit);
+                out AutoBattlerBattleUnit speedUnit);
             bool invalidHealth = simulation.TrySpawnUnit(
-                Team.Player,
+                AutoBattlerTeam.Player,
                 new HexCoordinate(0, 0),
                 1,
                 1f,
                 0,
                 10,
-                out BattleUnit healthUnit);
+                out AutoBattlerBattleUnit healthUnit);
             bool invalidDamage = simulation.TrySpawnUnit(
-                Team.Player,
+                AutoBattlerTeam.Player,
                 new HexCoordinate(0, 0),
                 1,
                 1f,
                 100,
                 -1,
-                out BattleUnit damageUnit);
+                out AutoBattlerBattleUnit damageUnit);
 
             Assert.That(invalidRange, Is.False);
             Assert.That(invalidSpeed, Is.False);
@@ -193,7 +193,7 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TrySetTarget_ConnectsRegisteredOpponents()
         {
-            BattleSimulation simulation = CreateDuel(out BattleUnit player, out BattleUnit enemy);
+            AutoBattlerBattleSimulation simulation = CreateDuel(out AutoBattlerBattleUnit player, out AutoBattlerBattleUnit enemy);
 
             bool playerTargeted = simulation.TrySetTarget(player, enemy);
             bool enemyTargeted = simulation.TrySetTarget(enemy, player);
@@ -207,19 +207,19 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TrySetTarget_RejectsFriendlyTarget()
         {
-            BattleSimulation simulation = new BattleSimulation(2, 1);
+            AutoBattlerBattleSimulation simulation = new AutoBattlerBattleSimulation(2, 1);
             simulation.TrySpawnUnit(
-                Team.Player,
+                AutoBattlerTeam.Player,
                 new HexCoordinate(0, 0),
                 1,
                 1f,
-                out BattleUnit first);
+                out AutoBattlerBattleUnit first);
             simulation.TrySpawnUnit(
-                Team.Player,
+                AutoBattlerTeam.Player,
                 new HexCoordinate(1, 0),
                 1,
                 1f,
-                out BattleUnit second);
+                out AutoBattlerBattleUnit second);
 
             bool targeted = simulation.TrySetTarget(first, second);
 
@@ -230,7 +230,7 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TickMovement_AcquiresTargetsAndMovesOpponentsTowardAttackRange()
         {
-            BattleSimulation simulation = CreateDuel(out BattleUnit player, out BattleUnit enemy);
+            AutoBattlerBattleSimulation simulation = CreateDuel(out AutoBattlerBattleUnit player, out AutoBattlerBattleUnit enemy);
 
             Assert.That(player.Target, Is.Null);
             Assert.That(enemy.Target, Is.Null);
@@ -246,41 +246,41 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TickAttacks_StartsImmediatelyAfterMovementEntersRange()
         {
-            BattleSimulation simulation = new BattleSimulation(3, 1);
+            AutoBattlerBattleSimulation simulation = new AutoBattlerBattleSimulation(3, 1);
             simulation.TrySpawnUnit(
-                Team.Player,
+                AutoBattlerTeam.Player,
                 new HexCoordinate(0, 0),
                 1,
                 1f,
-                out BattleUnit player);
+                out AutoBattlerBattleUnit player);
             simulation.TrySpawnUnit(
-                Team.Enemy,
+                AutoBattlerTeam.Enemy,
                 new HexCoordinate(2, 0),
                 1,
                 1f,
-                out BattleUnit enemy);
+                out AutoBattlerBattleUnit enemy);
 
             simulation.TickMovement(1f);
             simulation.TickAttacks(0.01f);
 
             Assert.That(player.Coordinate.DistanceTo(enemy.Coordinate), Is.EqualTo(1));
-            Assert.That(player.AttackPhase, Is.EqualTo(BattleAttackPhase.Animation));
-            Assert.That(enemy.AttackPhase, Is.EqualTo(BattleAttackPhase.Animation));
+            Assert.That(player.AttackPhase, Is.EqualTo(AutoBattlerBattleAttackPhase.Animation));
+            Assert.That(enemy.AttackPhase, Is.EqualTo(AutoBattlerBattleAttackPhase.Animation));
         }
 
-        static BattleSimulation CreateDuel(
-            out BattleUnit player,
-            out BattleUnit enemy)
+        static AutoBattlerBattleSimulation CreateDuel(
+            out AutoBattlerBattleUnit player,
+            out AutoBattlerBattleUnit enemy)
         {
-            BattleSimulation simulation = new BattleSimulation(5, 1);
+            AutoBattlerBattleSimulation simulation = new AutoBattlerBattleSimulation(5, 1);
             simulation.TrySpawnUnit(
-                Team.Player,
+                AutoBattlerTeam.Player,
                 new HexCoordinate(0, 0),
                 1,
                 1f,
                 out player);
             simulation.TrySpawnUnit(
-                Team.Enemy,
+                AutoBattlerTeam.Enemy,
                 new HexCoordinate(4, 0),
                 1,
                 1f,

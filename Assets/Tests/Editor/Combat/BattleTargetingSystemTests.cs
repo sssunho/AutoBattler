@@ -8,10 +8,10 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void ValidateCurrentTarget_KeepsInRangeTargetEvenWhenAnotherEnemyIsCloser()
         {
-            BattleBoard board = new BattleBoard(new HexMap(4, 1));
-            BattleUnit unit = PlaceUnit(board, 1, Team.Player, 0, 3);
-            BattleUnit target = PlaceUnit(board, 2, Team.Enemy, 3);
-            PlaceUnit(board, 9, Team.Enemy, 1);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(4, 1));
+            AutoBattlerBattleUnit unit = PlaceUnit(board, 1, AutoBattlerTeam.Player, 0, 3);
+            AutoBattlerBattleUnit target = PlaceUnit(board, 2, AutoBattlerTeam.Enemy, 3);
+            PlaceUnit(board, 9, AutoBattlerTeam.Enemy, 1);
             unit.Target = target;
 
             CreateTargetingSystem(board).ValidateCurrentTarget(unit);
@@ -25,9 +25,9 @@ namespace AutoBattler.Combat.Tests
         [TestCase(3)]
         public void ValidateCurrentTarget_ClearsTargetThatCannotBeKept(int invalidation)
         {
-            BattleBoard board = new BattleBoard(new HexMap(4, 1));
-            BattleUnit unit = PlaceUnit(board, 1, Team.Player, 0);
-            BattleUnit target = PlaceUnit(board, 2, Team.Enemy, 1);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(4, 1));
+            AutoBattlerBattleUnit unit = PlaceUnit(board, 1, AutoBattlerTeam.Player, 0);
+            AutoBattlerBattleUnit target = PlaceUnit(board, 2, AutoBattlerTeam.Enemy, 1);
             unit.Target = target;
 
             if (invalidation == 0)
@@ -44,7 +44,7 @@ namespace AutoBattler.Combat.Tests
             }
             else
             {
-                unit.Target = new BattleUnit(target.Id, target.Team, target.Coordinate, 1, 1f);
+                unit.Target = new AutoBattlerBattleUnit(target.Id, target.Team, target.Coordinate, 1, 1f);
             }
 
             CreateTargetingSystem(board).ValidateCurrentTarget(unit);
@@ -55,10 +55,10 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryAcquireTargetInRange_PrefersNearestEnemyOverHigherId()
         {
-            BattleBoard board = new BattleBoard(new HexMap(4, 1));
-            BattleUnit unit = PlaceUnit(board, 1, Team.Player, 0, 3);
-            PlaceUnit(board, 99, Team.Enemy, 3);
-            BattleUnit nearest = PlaceUnit(board, 2, Team.Enemy, 1);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(4, 1));
+            AutoBattlerBattleUnit unit = PlaceUnit(board, 1, AutoBattlerTeam.Player, 0, 3);
+            PlaceUnit(board, 99, AutoBattlerTeam.Enemy, 3);
+            AutoBattlerBattleUnit nearest = PlaceUnit(board, 2, AutoBattlerTeam.Enemy, 1);
 
             bool found = CreateTargetingSystem(board).TryAcquireTargetInRange(unit);
 
@@ -70,19 +70,19 @@ namespace AutoBattler.Combat.Tests
         [TestCase(true)]
         public void TryAcquireTargetInRange_PrefersHigherIdForEqualDistance(bool reversePlacement)
         {
-            BattleBoard board = new BattleBoard(new HexMap(3, 1));
-            BattleUnit unit = PlaceUnit(board, 1, Team.Player, 1);
-            BattleUnit highId;
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(3, 1));
+            AutoBattlerBattleUnit unit = PlaceUnit(board, 1, AutoBattlerTeam.Player, 1);
+            AutoBattlerBattleUnit highId;
 
             if (reversePlacement)
             {
-                highId = PlaceUnit(board, 9, Team.Enemy, 0);
-                PlaceUnit(board, 2, Team.Enemy, 2);
+                highId = PlaceUnit(board, 9, AutoBattlerTeam.Enemy, 0);
+                PlaceUnit(board, 2, AutoBattlerTeam.Enemy, 2);
             }
             else
             {
-                PlaceUnit(board, 2, Team.Enemy, 2);
-                highId = PlaceUnit(board, 9, Team.Enemy, 0);
+                PlaceUnit(board, 2, AutoBattlerTeam.Enemy, 2);
+                highId = PlaceUnit(board, 9, AutoBattlerTeam.Enemy, 0);
             }
 
             bool found = CreateTargetingSystem(board).TryAcquireTargetInRange(unit);
@@ -94,12 +94,12 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryAcquireTargetInRange_IgnoresFriendlyAndDeadUnits()
         {
-            BattleBoard board = new BattleBoard(new HexMap(4, 1));
-            BattleUnit unit = PlaceUnit(board, 1, Team.Player, 0, 3);
-            PlaceUnit(board, 9, Team.Player, 1);
-            BattleUnit dead = PlaceUnit(board, 8, Team.Enemy, 2);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(4, 1));
+            AutoBattlerBattleUnit unit = PlaceUnit(board, 1, AutoBattlerTeam.Player, 0, 3);
+            PlaceUnit(board, 9, AutoBattlerTeam.Player, 1);
+            AutoBattlerBattleUnit dead = PlaceUnit(board, 8, AutoBattlerTeam.Enemy, 2);
             dead.IsAlive = false;
-            BattleUnit target = PlaceUnit(board, 2, Team.Enemy, 3);
+            AutoBattlerBattleUnit target = PlaceUnit(board, 2, AutoBattlerTeam.Enemy, 3);
 
             bool found = CreateTargetingSystem(board).TryAcquireTargetInRange(unit);
 
@@ -110,12 +110,12 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryAcquireReachableTarget_ReplacesOutOfRangeTargetWithCloserEnemy()
         {
-            BattleBoard board = new BattleBoard(new HexMap(6, 1));
-            BattleUnit unit = PlaceUnit(board, 1, Team.Player, 0);
-            BattleUnit previous = PlaceUnit(board, 9, Team.Enemy, 5);
-            BattleUnit closer = PlaceUnit(board, 2, Team.Enemy, 2);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(6, 1));
+            AutoBattlerBattleUnit unit = PlaceUnit(board, 1, AutoBattlerTeam.Player, 0);
+            AutoBattlerBattleUnit previous = PlaceUnit(board, 9, AutoBattlerTeam.Enemy, 5);
+            AutoBattlerBattleUnit closer = PlaceUnit(board, 2, AutoBattlerTeam.Enemy, 2);
             unit.Target = previous;
-            BattleTargetingSystem targeting = CreateTargetingSystem(board);
+            AutoBattlerBattleTargetingSystem targeting = CreateTargetingSystem(board);
 
             targeting.ValidateCurrentTarget(unit);
             Assert.That(unit.Target, Is.Null);
@@ -130,10 +130,10 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryAcquireReachableTarget_DoesNotReuseResultAfterTargetIsRemoved()
         {
-            BattleBoard board = new BattleBoard(new HexMap(4, 1));
-            BattleUnit unit = PlaceUnit(board, 1, Team.Player, 0);
-            BattleUnit target = PlaceUnit(board, 2, Team.Enemy, 3);
-            BattleTargetingSystem targeting = CreateTargetingSystem(board);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(4, 1));
+            AutoBattlerBattleUnit unit = PlaceUnit(board, 1, AutoBattlerTeam.Player, 0);
+            AutoBattlerBattleUnit target = PlaceUnit(board, 2, AutoBattlerTeam.Enemy, 3);
+            AutoBattlerBattleTargetingSystem targeting = CreateTargetingSystem(board);
             Assert.That(targeting.TryAcquireReachableTarget(unit, out _), Is.True);
             board.Remove(target);
 
@@ -144,14 +144,14 @@ namespace AutoBattler.Combat.Tests
             Assert.That(nextStep, Is.EqualTo(default(HexCoordinate)));
         }
 
-        static BattleTargetingSystem CreateTargetingSystem(BattleBoard board)
+        static AutoBattlerBattleTargetingSystem CreateTargetingSystem(AutoBattlerBattleBoard board)
         {
-            return new BattleTargetingSystem(board, new BattlePathfinder());
+            return new AutoBattlerBattleTargetingSystem(board, new AutoBattlerBattlePathfinder());
         }
 
-        static BattleUnit PlaceUnit(BattleBoard board, int id, Team team, int q, int attackRange = 1)
+        static AutoBattlerBattleUnit PlaceUnit(AutoBattlerBattleBoard board, int id, AutoBattlerTeam team, int q, int attackRange = 1)
         {
-            BattleUnit unit = new BattleUnit(id, team, new HexCoordinate(q, 0), attackRange, 1f);
+            AutoBattlerBattleUnit unit = new AutoBattlerBattleUnit(id, team, new HexCoordinate(q, 0), attackRange, 1f);
             Assert.That(board.TryPlace(unit, unit.Coordinate), Is.True);
             return unit;
         }

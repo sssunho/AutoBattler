@@ -1,21 +1,20 @@
-using System;
 using System.Collections.Generic;
 using AutoBattler.HexGrid;
 
-namespace AutoBattler.Combat
+namespace RaggedBanner.Combat
 {
     public sealed class BattleBoard
     {
         readonly HexMap _map;
-        readonly Dictionary<int, BattleUnit> _units = new Dictionary<int, BattleUnit>();
+        readonly Dictionary<int, HexCharacter> _units = new Dictionary<int, HexCharacter>();
 
         public int Width => _map.Width;
         public int Height => _map.Height;
-        public IReadOnlyCollection<BattleUnit> Units => _units.Values;
+        public IReadOnlyCollection<HexCharacter> Units => _units.Values;
 
-        public BattleBoard(HexMap map)
+        public BattleBoard(int width, int height)
         {
-            _map = map ?? throw new ArgumentNullException(nameof(map));
+            _map = new HexMap(width, height);
         }
 
         public bool IsValid(HexCoordinate coordinate)
@@ -28,113 +27,16 @@ namespace AutoBattler.Combat
             return _map.TryGetCell(coordinate, out HexCell cell) && cell.IsOccupied;
         }
 
-        public bool TryPlace(BattleUnit unit, HexCoordinate coordinate)
+        public bool TryGetUnit(int id, out HexCharacter unit)
         {
-            if (unit == null || _units.ContainsKey(unit.Id))
-            {
-                return false;
-            }
-
-            if (!_map.TryGetCell(coordinate, out HexCell cell) || cell.IsOccupied)
-            {
-                return false;
-            }
-
-            cell.OccupantUnitId = unit.Id;
-            unit.Coordinate = coordinate;
-            _units.Add(unit.Id, unit);
-            return true;
+            return _units.TryGetValue(id, out unit);
         }
 
-        public bool TryMove(BattleUnit unit, HexCoordinate destination)
-        {
-            if (!IsRegistered(unit))
-            {
-                return false;
-            }
-
-            HexCoordinate origin = unit.Coordinate;
-
-            if (!_map.TryGetCell(origin, out HexCell originCell)
-                || originCell.OccupantUnitId != unit.Id)
-            {
-                return false;
-            }
-
-            if (origin == destination)
-            {
-                return true;
-            }
-
-            if (!_map.TryGetCell(destination, out HexCell destinationCell)
-                || destinationCell.IsOccupied)
-            {
-                return false;
-            }
-
-            destinationCell.OccupantUnitId = unit.Id;
-            originCell.OccupantUnitId = null;
-            unit.Coordinate = destination;
-            return true;
-        }
-
-        public bool Remove(BattleUnit unit)
-        {
-            if (!IsRegistered(unit))
-            {
-                return false;
-            }
-
-            if (!_map.TryGetCell(unit.Coordinate, out HexCell cell)
-                || cell.OccupantUnitId != unit.Id)
-            {
-                return false;
-            }
-
-            cell.OccupantUnitId = null;
-            _units.Remove(unit.Id);
-            return true;
-        }
-
-        public bool TryApplyDamage(BattleUnit unit, int damage)
-        {
-            if (damage < 0 || !IsRegistered(unit) || !unit.IsAlive)
-            {
-                return false;
-            }
-
-            if (!_map.TryGetCell(unit.Coordinate, out HexCell cell)
-                || cell.OccupantUnitId != unit.Id)
-            {
-                return false;
-            }
-
-            unit.CurrentHealth = Math.Max(0, unit.CurrentHealth - damage);
-
-            if (unit.CurrentHealth > 0)
-            {
-                return true;
-            }
-
-            unit.IsAlive = false;
-            unit.ClearAttackState();
-            unit.Target = null;
-            cell.OccupantUnitId = null;
-            _units.Remove(unit.Id);
-            return true;
-        }
-
-        public bool TryGetUnit(int unitId, out BattleUnit unit)
-        {
-            return _units.TryGetValue(unitId, out unit);
-        }
-
-        public bool TryGetUnit(HexCoordinate coordinate, out BattleUnit unit)
+        public bool TryGetUnit(HexCoordinate coordinate, out HexCharacter unit)
         {
             unit = null;
 
-            if (!_map.TryGetCell(coordinate, out HexCell cell)
-                || !cell.OccupantUnitId.HasValue)
+            if (!_map.TryGetCell(coordinate, out HexCell cell) || !cell.OccupantUnitId.HasValue)
             {
                 return false;
             }
@@ -142,26 +44,48 @@ namespace AutoBattler.Combat
             return _units.TryGetValue(cell.OccupantUnitId.Value, out unit);
         }
 
-        public void CopyUnitsTo(List<BattleUnit> result)
+        internal bool TryAdd(int id, HexCoordinate coordinate, out HexCharacter unit)
         {
-            if (result == null)
+            unit = null;
+
+            if (id <= 0 || _units.ContainsKey(id)
+                || !_map.TryGetCell(coordinate, out HexCell cell) || cell.IsOccupied)
             {
-                throw new ArgumentNullException(nameof(result));
+                return false;
             }
 
-            result.Clear();
-
-            foreach (BattleUnit unit in _units.Values)
-            {
-                result.Add(unit);
-            }
+            unit = new HexCharacter(id, coordinate);
+            _units.Add(id, unit);
+            cell.OccupantUnitId = id;
+            return true;
         }
 
-        bool IsRegistered(BattleUnit unit)
+        internal bool TryMove(int id, HexCoordinate destination)
         {
-            return unit != null
-                && _units.TryGetValue(unit.Id, out BattleUnit registeredUnit)
-                && ReferenceEquals(registeredUnit, unit);
+            if (!_units.TryGetValue(id, out HexCharacter unit)
+                || unit.Coordinate.DistanceTo(destination) != 1
+                || !_map.TryGetCell(unit.Coordinate, out HexCell origin) || origin.OccupantUnitId != id
+                || !_map.TryGetCell(destination, out HexCell target) || target.IsOccupied)
+            {
+                return false;
+            }
+
+            origin.OccupantUnitId = null;
+            target.OccupantUnitId = id;
+            unit.SetCoordinate(destination);
+            return true;
+        }
+
+        internal bool Remove(int id)
+        {
+            if (!_units.TryGetValue(id, out HexCharacter unit))
+            {
+                return false;
+            }
+
+            _map[unit.Coordinate].OccupantUnitId = null;
+            _units.Remove(id);
+            return true;
         }
     }
 }

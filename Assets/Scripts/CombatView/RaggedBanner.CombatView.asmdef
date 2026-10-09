@@ -1,0 +1,20 @@
+{
+  "name": "RaggedBanner.CombatView",
+  "rootNamespace": "RaggedBanner.Combat.Unity",
+  "references": [
+    "RaggedBanner.Combat",
+    "AutoBattler.HexGrid",
+    "AutoBattler.HexGridView",
+    "UnityEngine.UI",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

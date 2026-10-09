@@ -4,7 +4,7 @@ using UnityEngine;
 namespace AutoBattler.Combat.Unity
 {
     [Serializable]
-    public sealed class UnitStat
+    public sealed class AutoBattlerUnitStat
     {
         [SerializeField]
         [Min(1)]
@@ -68,9 +68,9 @@ namespace AutoBattler.Combat.Unity
                 && !float.IsInfinity(_attackCooldownDuration);
         }
 
-        internal BattleUnitStat CreateBattleUnitStat()
+        internal AutoBattlerBattleUnitStat CreateBattleUnitStat()
         {
-            return new BattleUnitStat(
+            return new AutoBattlerBattleUnitStat(
                 _maxHealth,
                 _maxMana,
                 _moveSpeed,

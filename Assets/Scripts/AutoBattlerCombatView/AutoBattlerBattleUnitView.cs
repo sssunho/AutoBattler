@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace AutoBattler.Combat.Unity
 {
-    public sealed class BattleUnitView : MonoBehaviour
+    public sealed class AutoBattlerBattleUnitView : MonoBehaviour
     {
         static readonly int _idleState = Animator.StringToHash("Base Layer.Idle");
         static readonly int _walkState = Animator.StringToHash("Base Layer.Walk");
@@ -17,7 +17,7 @@ namespace AutoBattler.Combat.Unity
         [SerializeField]
         AnimationClip _attackAnimationClip;
 
-        BattleUnit _unit;
+        AutoBattlerBattleUnit _unit;
         HexMapView _mapView;
         HexCoordinate _displayCoordinate;
         Vector3 _moveStart;
@@ -26,9 +26,9 @@ namespace AutoBattler.Combat.Unity
         float _moveElapsed;
         bool _isMoving;
         bool _isWalking;
-        BattleAttackPhase _displayedAttackPhase;
+        AutoBattlerBattleAttackPhase _displayedAttackPhase;
 
-        public BattleUnit Unit => _unit;
+        public AutoBattlerBattleUnit Unit => _unit;
 
         void Awake()
         {
@@ -72,7 +72,7 @@ namespace AutoBattler.Combat.Unity
         {
             _isMoving = false;
             _moveElapsed = 0f;
-            _displayedAttackPhase = BattleAttackPhase.None;
+            _displayedAttackPhase = AutoBattlerBattleAttackPhase.None;
 
             if (_animator != null)
             {
@@ -89,7 +89,7 @@ namespace AutoBattler.Combat.Unity
             SnapTo(coordinate);
         }
 
-        public void Bind(BattleUnit unit, HexMapView mapView)
+        public void Bind(AutoBattlerBattleUnit unit, HexMapView mapView)
         {
             _unit = unit ?? throw new ArgumentNullException(nameof(unit));
             _mapView = mapView ?? throw new ArgumentNullException(nameof(mapView));
@@ -151,42 +151,42 @@ namespace AutoBattler.Combat.Unity
                 return false;
             }
 
-            BattleAttackPhase attackPhase = _unit.AttackPhase;
+            AutoBattlerBattleAttackPhase attackPhase = _unit.AttackPhase;
 
-            if (attackPhase == BattleAttackPhase.Animation)
+            if (attackPhase == AutoBattlerBattleAttackPhase.Animation)
             {
-                if (_displayedAttackPhase != BattleAttackPhase.Animation)
+                if (_displayedAttackPhase != AutoBattlerBattleAttackPhase.Animation)
                 {
                     FaceAttackTarget();
                     _animator.speed = _attackAnimationClip.length / _unit.AttackAnimationDuration;
                     _animator.CrossFadeInFixedTime(_attackState, 0.2f, 0, 0f);
-                    _displayedAttackPhase = BattleAttackPhase.Animation;
+                    _displayedAttackPhase = AutoBattlerBattleAttackPhase.Animation;
                 }
 
                 return true;
             }
 
-            if (attackPhase == BattleAttackPhase.Cooldown)
+            if (attackPhase == AutoBattlerBattleAttackPhase.Cooldown)
             {
-                if (_displayedAttackPhase != BattleAttackPhase.Cooldown)
+                if (_displayedAttackPhase != AutoBattlerBattleAttackPhase.Cooldown)
                 {
-                    if (_displayedAttackPhase == BattleAttackPhase.None)
+                    if (_displayedAttackPhase == AutoBattlerBattleAttackPhase.None)
                     {
                         FaceAttackTarget();
                     }
 
                     _animator.Play(_attackState, 0, 1f);
                     _animator.speed = 0f;
-                    _displayedAttackPhase = BattleAttackPhase.Cooldown;
+                    _displayedAttackPhase = AutoBattlerBattleAttackPhase.Cooldown;
                 }
 
                 return true;
             }
 
-            if (_displayedAttackPhase != BattleAttackPhase.None)
+            if (_displayedAttackPhase != AutoBattlerBattleAttackPhase.None)
             {
                 _animator.speed = 1f;
-                _displayedAttackPhase = BattleAttackPhase.None;
+                _displayedAttackPhase = AutoBattlerBattleAttackPhase.None;
                 SetWalking(_isMoving, true);
             }
 

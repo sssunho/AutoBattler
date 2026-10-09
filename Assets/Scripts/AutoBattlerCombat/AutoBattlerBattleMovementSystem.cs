@@ -6,19 +6,19 @@ using Unity.Profiling;
 
 namespace AutoBattler.Combat
 {
-    public sealed class BattleMovementSystem
+    public sealed class AutoBattlerBattleMovementSystem
     {
         const float _maximumMoveGauge = 2f;
 
-        static readonly Comparison<BattleUnit> _movementPriority = CompareMovementPriority;
+        static readonly Comparison<AutoBattlerBattleUnit> _movementPriority = CompareMovementPriority;
 
-        readonly BattleBoard _board;
-        readonly BattleTargetingSystem _targetingSystem;
-        readonly List<BattleUnit> _units = new List<BattleUnit>();
+        readonly AutoBattlerBattleBoard _board;
+        readonly AutoBattlerBattleTargetingSystem _targetingSystem;
+        readonly List<AutoBattlerBattleUnit> _units = new List<AutoBattlerBattleUnit>();
 
         static readonly ProfilerMarker _bfsMarker = new ProfilerMarker("BFS");
 
-        public BattleMovementSystem(BattleBoard board, BattleTargetingSystem targetingSystem)
+        public AutoBattlerBattleMovementSystem(AutoBattlerBattleBoard board, AutoBattlerBattleTargetingSystem targetingSystem)
         {
             _board = board ?? throw new ArgumentNullException(nameof(board));
             _targetingSystem = targetingSystem ?? throw new ArgumentNullException(nameof(targetingSystem));
@@ -45,7 +45,7 @@ namespace AutoBattler.Combat
 
             for (int i = 0; i < _units.Count; i++)
             {
-                BattleUnit unit = _units[i];
+                AutoBattlerBattleUnit unit = _units[i];
 
                 _targetingSystem.ValidateCurrentTarget(unit);
 
@@ -87,7 +87,7 @@ namespace AutoBattler.Combat
             }
         }
 
-        static int CompareMovementPriority(BattleUnit left, BattleUnit right)
+        static int CompareMovementPriority(AutoBattlerBattleUnit left, AutoBattlerBattleUnit right)
         {
             int speedComparison = right.MoveSpeed.CompareTo(left.MoveSpeed);
 

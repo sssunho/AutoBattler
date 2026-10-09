@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace AutoBattler.Combat.Unity
 {
-    [CreateAssetMenu(fileName = "UnitDefinition", menuName = "AutoBattler/Unit Definition")]
-    public sealed class UnitDefinition : ScriptableObject
+    [CreateAssetMenu(fileName = "AutoBattlerUnitDefinition", menuName = "AutoBattler/Unit Definition")]
+    public sealed class AutoBattlerUnitDefinition : ScriptableObject
     {
         [SerializeField]
         string _id;
@@ -12,15 +12,15 @@ namespace AutoBattler.Combat.Unity
         string _displayName;
 
         [SerializeField]
-        UnitStat _stat = new UnitStat();
+        AutoBattlerUnitStat _stat = new AutoBattlerUnitStat();
 
         [SerializeField]
-        BattleUnitView _viewPrefab;
+        AutoBattlerBattleUnitView _viewPrefab;
 
         public string Id => _id;
         public string DisplayName => _displayName;
-        public UnitStat Stat => _stat;
-        public BattleUnitView ViewPrefab => _viewPrefab;
+        public AutoBattlerUnitStat Stat => _stat;
+        public AutoBattlerBattleUnitView ViewPrefab => _viewPrefab;
 
         internal bool IsValid()
         {

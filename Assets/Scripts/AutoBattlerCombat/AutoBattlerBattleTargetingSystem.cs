@@ -4,20 +4,20 @@ using AutoBattler.HexGrid;
 
 namespace AutoBattler.Combat
 {
-    public sealed class BattleTargetingSystem
+    public sealed class AutoBattlerBattleTargetingSystem
     {
-        readonly BattleBoard _board;
-        readonly BattlePathfinder _pathfinder;
-        readonly List<BattleUnit> _candidates = new List<BattleUnit>();
+        readonly AutoBattlerBattleBoard _board;
+        readonly AutoBattlerBattlePathfinder _pathfinder;
+        readonly List<AutoBattlerBattleUnit> _candidates = new List<AutoBattlerBattleUnit>();
         readonly List<HexCoordinate> _path = new List<HexCoordinate>();
 
-        public BattleTargetingSystem(BattleBoard board, BattlePathfinder pathfinder)
+        public AutoBattlerBattleTargetingSystem(AutoBattlerBattleBoard board, AutoBattlerBattlePathfinder pathfinder)
         {
             _board = board ?? throw new ArgumentNullException(nameof(board));
             _pathfinder = pathfinder ?? throw new ArgumentNullException(nameof(pathfinder));
         }
 
-        public void ValidateCurrentTarget(BattleUnit unit)
+        public void ValidateCurrentTarget(AutoBattlerBattleUnit unit)
         {
             if (unit == null)
             {
@@ -31,7 +31,7 @@ namespace AutoBattler.Combat
             }
         }
 
-        public bool TryAcquireTargetInRange(BattleUnit unit)
+        public bool TryAcquireTargetInRange(AutoBattlerBattleUnit unit)
         {
             if (unit == null)
             {
@@ -44,7 +44,7 @@ namespace AutoBattler.Combat
 
             for (int i = 0; i < _candidates.Count; i++)
             {
-                BattleUnit candidate = _candidates[i];
+                AutoBattlerBattleUnit candidate = _candidates[i];
                 int distance = unit.Coordinate.DistanceTo(candidate.Coordinate);
 
                 if (distance > unit.AttackRange)
@@ -63,7 +63,7 @@ namespace AutoBattler.Combat
             return unit.Target != null;
         }
 
-        public bool TryAcquireReachableTarget(BattleUnit unit, out HexCoordinate nextStep)
+        public bool TryAcquireReachableTarget(AutoBattlerBattleUnit unit, out HexCoordinate nextStep)
         {
             nextStep = default;
 
@@ -75,7 +75,7 @@ namespace AutoBattler.Combat
             unit.Target = null;
             CollectCandidates(unit);
 
-            if (!_pathfinder.TryFindPathToAttackPosition(_board, unit, _candidates, _path, out BattleUnit target)
+            if (!_pathfinder.TryFindPathToAttackPosition(_board, unit, _candidates, _path, out AutoBattlerBattleUnit target)
                 || _path.Count == 0)
             {
                 return false;
@@ -86,14 +86,14 @@ namespace AutoBattler.Combat
             return true;
         }
 
-        void CollectCandidates(BattleUnit unit)
+        void CollectCandidates(AutoBattlerBattleUnit unit)
         {
             _board.CopyUnitsTo(_candidates);
             int count = 0;
 
             for (int i = 0; i < _candidates.Count; i++)
             {
-                BattleUnit candidate = _candidates[i];
+                AutoBattlerBattleUnit candidate = _candidates[i];
 
                 if (IsValidTarget(unit, candidate))
                 {
@@ -105,7 +105,7 @@ namespace AutoBattler.Combat
             _candidates.RemoveRange(count, _candidates.Count - count);
         }
 
-        bool IsValidTarget(BattleUnit unit, BattleUnit target)
+        bool IsValidTarget(AutoBattlerBattleUnit unit, AutoBattlerBattleUnit target)
         {
             return unit != null
                 && target != null
@@ -116,11 +116,11 @@ namespace AutoBattler.Combat
                 && IsPlacedUnit(target);
         }
 
-        bool IsPlacedUnit(BattleUnit unit)
+        bool IsPlacedUnit(AutoBattlerBattleUnit unit)
         {
-            return _board.TryGetUnit(unit.Id, out BattleUnit registeredUnit)
+            return _board.TryGetUnit(unit.Id, out AutoBattlerBattleUnit registeredUnit)
                 && ReferenceEquals(unit, registeredUnit)
-                && _board.TryGetUnit(unit.Coordinate, out BattleUnit occupyingUnit)
+                && _board.TryGetUnit(unit.Coordinate, out AutoBattlerBattleUnit occupyingUnit)
                 && ReferenceEquals(unit, occupyingUnit);
         }
     }

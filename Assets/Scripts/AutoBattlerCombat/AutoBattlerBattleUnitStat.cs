@@ -2,7 +2,7 @@ using System;
 
 namespace AutoBattler.Combat
 {
-    public sealed class BattleUnitStat
+    public sealed class AutoBattlerBattleUnitStat
     {
         public int MaxHealth { get; internal set; }
         public int MaxMana { get; internal set; }
@@ -13,7 +13,7 @@ namespace AutoBattler.Combat
         public float AttackHitNormalizedTime { get; internal set; }
         public float AttackCooldownDuration { get; internal set; }
 
-        public BattleUnitStat(
+        public AutoBattlerBattleUnitStat(
             int maxHealth,
             int maxMana,
             float moveSpeed,
@@ -80,7 +80,7 @@ namespace AutoBattler.Combat
             AttackCooldownDuration = attackCooldownDuration;
         }
 
-        public BattleUnitStat(BattleUnitStat source)
+        public AutoBattlerBattleUnitStat(AutoBattlerBattleUnitStat source)
             : this(
                 source != null ? source.MaxHealth : throw new ArgumentNullException(nameof(source)),
                 source.MaxMana,

@@ -1,192 +1,199 @@
+using System;
+using System.Collections.Generic;
 using AutoBattler.HexGrid;
 
-namespace AutoBattler.Combat
+namespace RaggedBanner.Combat
 {
     public sealed class BattleSimulation
     {
         readonly BattleBoard _board;
-        readonly BattlePathfinder _pathfinder;
-        readonly BattleTargetingSystem _targetingSystem;
-        readonly BattleMovementSystem _movementSystem;
-        readonly BattleAttackSystem _attackSystem;
+        readonly HexPathfinder _pathfinder = new HexPathfinder();
+        readonly List<int> _turnOrder = new List<int>();
+        readonly List<HexCoordinate> _path = new List<HexCoordinate>();
 
-        int _nextUnitId = 1;
+        int _lastUnitId;
+        int _turnIndex;
+        int _movingUnitId;
+        int _pathIndex;
+        long _lastStepId;
+        long _pendingStepId;
+        bool _isMovementPaused;
 
         public BattleBoard Board => _board;
+        public int? CurrentUnitId => _turnOrder.Count > 0 ? _turnOrder[_turnIndex] : (int?)null;
+        public bool IsBusy => _movingUnitId != 0;
+        public int MovingUnitId => _movingUnitId;
+        public bool IsMovementPaused => _isMovementPaused;
+        public long PendingStepId => _pendingStepId;
 
         public BattleSimulation(int width, int height)
         {
-            HexMap map = new HexMap(width, height);
-            _board = new BattleBoard(map);
-            _pathfinder = new BattlePathfinder();
-            _targetingSystem = new BattleTargetingSystem(_board, _pathfinder);
-            _movementSystem = new BattleMovementSystem(_board, _targetingSystem);
-            _attackSystem = new BattleAttackSystem(_board);
+            if (width <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(width));
+            }
+
+            if (height <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(height));
+            }
+
+            _board = new BattleBoard(width, height);
         }
 
-        public bool TrySpawnUnit(
-            Team team,
-            HexCoordinate coordinate,
-            BattleUnitStat stat,
-            out BattleUnit unit)
+        public bool TrySpawnUnit(HexCoordinate coordinate, out HexCharacter unit)
         {
             unit = null;
 
-            if (stat == null || !stat.IsValid())
+            if (IsBusy || _lastUnitId == int.MaxValue
+                || !_board.TryAdd(_lastUnitId + 1, coordinate, out unit))
             {
                 return false;
             }
 
-            BattleUnit createdUnit = new BattleUnit(
-                _nextUnitId,
-                team,
-                coordinate,
-                stat);
-
-            if (!_board.TryPlace(createdUnit, coordinate))
-            {
-                return false;
-            }
-
-            _nextUnitId++;
-            unit = createdUnit;
+            _lastUnitId = unit.Id;
+            _turnOrder.Add(unit.Id);
             return true;
         }
 
-        public bool TrySpawnUnit(
-            Team team,
-            HexCoordinate coordinate,
-            int attackRange,
-            float moveSpeed,
-            out BattleUnit unit)
+        public bool RemoveUnit(int unitId)
         {
-            return TrySpawnUnit(
-                team,
-                coordinate,
-                attackRange,
-                moveSpeed,
-                100,
-                10,
-                1.6f,
-                0.4f,
-                0.4f,
-                out unit);
-        }
+            int index = _turnOrder.IndexOf(unitId);
 
-        public bool TrySpawnUnit(
-            Team team,
-            HexCoordinate coordinate,
-            int attackRange,
-            float moveSpeed,
-            int maxHealth,
-            int attackDamage,
-            out BattleUnit unit)
-        {
-            return TrySpawnUnit(
-                team,
-                coordinate,
-                attackRange,
-                moveSpeed,
-                maxHealth,
-                attackDamage,
-                1.6f,
-                0.4f,
-                0.4f,
-                out unit);
-        }
-
-        public bool TrySpawnUnit(
-            Team team,
-            HexCoordinate coordinate,
-            int attackRange,
-            float moveSpeed,
-            int maxHealth,
-            int attackDamage,
-            float attackAnimationDuration,
-            float attackHitNormalizedTime,
-            float attackCooldownDuration,
-            out BattleUnit unit)
-        {
-            unit = null;
-
-            if (attackRange < 0
-                || moveSpeed < 0f
-                || float.IsNaN(moveSpeed)
-                || float.IsInfinity(moveSpeed)
-                || maxHealth <= 0
-                || attackDamage < 0
-                || attackAnimationDuration <= 0f
-                || float.IsNaN(attackAnimationDuration)
-                || float.IsInfinity(attackAnimationDuration)
-                || attackHitNormalizedTime <= 0f
-                || attackHitNormalizedTime > 1f
-                || float.IsNaN(attackHitNormalizedTime)
-                || float.IsInfinity(attackHitNormalizedTime)
-                || attackCooldownDuration < 0f
-                || float.IsNaN(attackCooldownDuration)
-                || float.IsInfinity(attackCooldownDuration))
+            if (index < 0)
             {
                 return false;
             }
 
-            BattleUnitStat stat = new BattleUnitStat(
-                maxHealth,
-                0,
-                moveSpeed,
-                attackDamage,
-                attackRange,
-                attackAnimationDuration,
-                attackHitNormalizedTime,
-                attackCooldownDuration);
-            return TrySpawnUnit(team, coordinate, stat, out unit);
-        }
-
-        public bool TryApplyBasicAttackDamage(BattleUnit attacker, BattleUnit target)
-        {
-            if (!IsRegistered(attacker)
-                || !IsRegistered(target)
-                || ReferenceEquals(attacker, target)
-                || !attacker.IsAlive
-                || !target.IsAlive
-                || attacker.Team == target.Team)
+            if (_movingUnitId == unitId)
             {
-                return false;
+                CancelMovement();
             }
 
-            return _board.TryApplyDamage(target, attacker.AttackDamage);
-        }
+            _board.Remove(unitId);
+            _turnOrder.RemoveAt(index);
 
-        public bool TrySetTarget(BattleUnit unit, BattleUnit target)
-        {
-            if (!IsRegistered(unit)
-                || !IsRegistered(target)
-                || ReferenceEquals(unit, target)
-                || !unit.IsAlive
-                || !target.IsAlive
-                || unit.Team == target.Team)
+            if (index < _turnIndex)
             {
-                return false;
+                _turnIndex--;
             }
 
-            unit.Target = target;
+            if (_turnIndex >= _turnOrder.Count)
+            {
+                _turnIndex = 0;
+            }
+
             return true;
         }
 
-        public void TickMovement(float tickDuration)
+        public bool TryEndTurn(int unitId)
         {
-            _movementSystem.Tick(tickDuration);
+            if (IsBusy || CurrentUnitId != unitId)
+            {
+                return false;
+            }
+
+            _turnIndex = (_turnIndex + 1) % _turnOrder.Count;
+            return true;
         }
 
-        public void TickAttacks(float deltaTime)
+        public bool TryMove(int unitId, HexCoordinate destination)
         {
-            _attackSystem.Tick(deltaTime);
+            if (IsBusy || CurrentUnitId != unitId
+                || !_board.TryGetUnit(unitId, out HexCharacter unit) || destination == unit.Coordinate)
+            {
+                return false;
+            }
+
+            if (!_pathfinder.TryFindPath(_board, unit.Coordinate, destination, _path) || _path.Count == 0)
+            {
+                return false;
+            }
+
+            _movingUnitId = unitId;
+            _pathIndex = 0;
+            return true;
         }
 
-        bool IsRegistered(BattleUnit unit)
+        public bool TryAdvanceMovement(out HexMovementStep step)
         {
-            return unit != null
-                && _board.TryGetUnit(unit.Id, out BattleUnit registeredUnit)
-                && ReferenceEquals(registeredUnit, unit);
+            step = default;
+
+            if (!IsBusy || _isMovementPaused || _pendingStepId != 0 || _pathIndex >= _path.Count)
+            {
+                return false;
+            }
+
+            long stepId = checked(_lastStepId + 1);
+            HexCoordinate destination = _path[_pathIndex];
+
+            if (!_board.TryGetUnit(_movingUnitId, out HexCharacter unit))
+            {
+                CancelMovement();
+                return false;
+            }
+
+            HexCoordinate origin = unit.Coordinate;
+
+            if (!_board.TryMove(_movingUnitId, destination))
+            {
+                CancelMovement();
+                return false;
+            }
+
+            step = new HexMovementStep(stepId, _movingUnitId, origin, destination);
+            _lastStepId = stepId;
+            _pendingStepId = stepId;
+            _pathIndex++;
+            return true;
+        }
+
+        public bool TryCompleteMovementStep(long stepId)
+        {
+            if (stepId == 0 || stepId != _pendingStepId)
+            {
+                return false;
+            }
+
+            _pendingStepId = 0;
+
+            if (_pathIndex == _path.Count)
+            {
+                CancelMovement();
+            }
+
+            return true;
+        }
+
+        public bool PauseMovement()
+        {
+            if (!IsBusy || _isMovementPaused)
+            {
+                return false;
+            }
+
+            _isMovementPaused = true;
+            return true;
+        }
+
+        public bool ResumeMovement()
+        {
+            if (!IsBusy || !_isMovementPaused)
+            {
+                return false;
+            }
+
+            _isMovementPaused = false;
+            return true;
+        }
+
+        public void CancelMovement()
+        {
+            _path.Clear();
+            _pathIndex = 0;
+            _movingUnitId = 0;
+            _pendingStepId = 0;
+            _isMovementPaused = false;
         }
     }
 }

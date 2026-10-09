@@ -3,12 +3,12 @@ using AutoBattler.HexGrid;
 
 namespace AutoBattler.Combat
 {
-    public sealed class BattleUnit
+    public sealed class AutoBattlerBattleUnit
     {
         public int Id { get; }
-        public Team Team { get; }
+        public AutoBattlerTeam Team { get; }
         public HexCoordinate Coordinate { get; internal set; }
-        public BattleUnitStat Stat { get; }
+        public AutoBattlerBattleUnitStat Stat { get; }
         public int AttackRange => Stat.AttackRange;
         public float MoveSpeed => Stat.MoveSpeed;
         public int MaxHealth => Stat.MaxHealth;
@@ -21,15 +21,15 @@ namespace AutoBattler.Combat
         public float AttackCooldownDuration => Stat.AttackCooldownDuration;
         public float MoveGauge { get; internal set; }
         public bool IsAlive { get; internal set; }
-        public BattleAttackPhase AttackPhase { get; internal set; }
-        public BattleUnit AttackTarget { get; internal set; }
+        public AutoBattlerBattleAttackPhase AttackPhase { get; internal set; }
+        public AutoBattlerBattleUnit AttackTarget { get; internal set; }
         public float AttackElapsed { get; internal set; }
-        public bool IsAttacking => AttackPhase != BattleAttackPhase.None;
-        public BattleUnit Target { get; internal set; }
+        public bool IsAttacking => AttackPhase != AutoBattlerBattleAttackPhase.None;
+        public AutoBattlerBattleUnit Target { get; internal set; }
 
-        public BattleUnit(
+        public AutoBattlerBattleUnit(
             int id,
-            Team team,
+            AutoBattlerTeam team,
             HexCoordinate coordinate,
             int attackRange,
             float moveSpeed)
@@ -37,9 +37,9 @@ namespace AutoBattler.Combat
         {
         }
 
-        public BattleUnit(
+        public AutoBattlerBattleUnit(
             int id,
-            Team team,
+            AutoBattlerTeam team,
             HexCoordinate coordinate,
             int attackRange,
             float moveSpeed,
@@ -59,9 +59,9 @@ namespace AutoBattler.Combat
         {
         }
 
-        public BattleUnit(
+        public AutoBattlerBattleUnit(
             int id,
-            Team team,
+            AutoBattlerTeam team,
             HexCoordinate coordinate,
             int attackRange,
             float moveSpeed,
@@ -74,7 +74,7 @@ namespace AutoBattler.Combat
                 id,
                 team,
                 coordinate,
-                new BattleUnitStat(
+                new AutoBattlerBattleUnitStat(
                     maxHealth,
                     0,
                     moveSpeed,
@@ -86,16 +86,16 @@ namespace AutoBattler.Combat
         {
         }
 
-        public BattleUnit(
+        public AutoBattlerBattleUnit(
             int id,
-            Team team,
+            AutoBattlerTeam team,
             HexCoordinate coordinate,
-            BattleUnitStat stat)
+            AutoBattlerBattleUnitStat stat)
         {
             Id = id;
             Team = team;
             Coordinate = coordinate;
-            Stat = new BattleUnitStat(stat ?? throw new ArgumentNullException(nameof(stat)));
+            Stat = new AutoBattlerBattleUnitStat(stat ?? throw new ArgumentNullException(nameof(stat)));
             CurrentHealth = Stat.MaxHealth;
             CurrentMana = 0;
             MoveGauge = 0f;
@@ -104,7 +104,7 @@ namespace AutoBattler.Combat
 
         internal void ClearAttackState()
         {
-            AttackPhase = BattleAttackPhase.None;
+            AttackPhase = AutoBattlerBattleAttackPhase.None;
             AttackTarget = null;
             AttackElapsed = 0f;
         }

@@ -8,11 +8,11 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void Tick_MovesUnitsOneCoordinateTowardEachOther()
         {
-            BattleBoard board = new BattleBoard(new HexMap(5, 1));
-            BattleUnit player = CreateUnit(1, Team.Player, new HexCoordinate(0, 0), 1f);
-            BattleUnit enemy = CreateUnit(2, Team.Enemy, new HexCoordinate(4, 0), 1f);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(5, 1));
+            AutoBattlerBattleUnit player = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0), 1f);
+            AutoBattlerBattleUnit enemy = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(4, 0), 1f);
             PlaceOpponents(board, player, enemy);
-            BattleMovementSystem movementSystem = CreateMovementSystem(board);
+            AutoBattlerBattleMovementSystem movementSystem = CreateMovementSystem(board);
 
             movementSystem.Tick(1f);
 
@@ -23,11 +23,11 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void Tick_StopsUnitsWhenTheyReachAttackRange()
         {
-            BattleBoard board = new BattleBoard(new HexMap(5, 1));
-            BattleUnit player = CreateUnit(1, Team.Player, new HexCoordinate(0, 0), 1f);
-            BattleUnit enemy = CreateUnit(2, Team.Enemy, new HexCoordinate(4, 0), 1f);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(5, 1));
+            AutoBattlerBattleUnit player = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0), 1f);
+            AutoBattlerBattleUnit enemy = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(4, 0), 1f);
             PlaceOpponents(board, player, enemy);
-            BattleMovementSystem movementSystem = CreateMovementSystem(board);
+            AutoBattlerBattleMovementSystem movementSystem = CreateMovementSystem(board);
 
             movementSystem.Tick(1f);
             movementSystem.Tick(1f);
@@ -41,11 +41,11 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void Tick_DoesNotMoveUnitWithoutEnoughGauge()
         {
-            BattleBoard board = new BattleBoard(new HexMap(3, 1));
-            BattleUnit player = CreateUnit(1, Team.Player, new HexCoordinate(0, 0), 0.5f);
-            BattleUnit enemy = CreateUnit(2, Team.Enemy, new HexCoordinate(2, 0), 0f);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(3, 1));
+            AutoBattlerBattleUnit player = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0), 0.5f);
+            AutoBattlerBattleUnit enemy = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(2, 0), 0f);
             PlaceOpponents(board, player, enemy);
-            BattleMovementSystem movementSystem = CreateMovementSystem(board);
+            AutoBattlerBattleMovementSystem movementSystem = CreateMovementSystem(board);
 
             movementSystem.Tick(1f);
 
@@ -56,11 +56,11 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void Tick_DoesNotAccumulateGaugeAfterEarlierEnemyMovesIntoRange()
         {
-            BattleBoard board = new BattleBoard(new HexMap(5, 1));
-            BattleUnit player = CreateUnit(1, Team.Player, new HexCoordinate(0, 0), 1f);
-            BattleUnit enemy = CreateUnit(2, Team.Enemy, new HexCoordinate(4, 0), 1f);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(5, 1));
+            AutoBattlerBattleUnit player = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0), 1f);
+            AutoBattlerBattleUnit enemy = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(4, 0), 1f);
             PlaceOpponents(board, player, enemy);
-            BattleMovementSystem movementSystem = CreateMovementSystem(board);
+            AutoBattlerBattleMovementSystem movementSystem = CreateMovementSystem(board);
 
             movementSystem.Tick(1f);
             movementSystem.Tick(1f);
@@ -72,11 +72,11 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void Tick_GivesDestinationPriorityToHigherMoveSpeed()
         {
-            BattleBoard board = new BattleBoard(new HexMap(3, 1));
-            BattleUnit player = CreateUnit(1, Team.Player, new HexCoordinate(0, 0), 2f);
-            BattleUnit enemy = CreateUnit(2, Team.Enemy, new HexCoordinate(2, 0), 1f);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(3, 1));
+            AutoBattlerBattleUnit player = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0), 2f);
+            AutoBattlerBattleUnit enemy = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(2, 0), 1f);
             PlaceOpponents(board, player, enemy);
-            BattleMovementSystem movementSystem = CreateMovementSystem(board);
+            AutoBattlerBattleMovementSystem movementSystem = CreateMovementSystem(board);
 
             movementSystem.Tick(1f);
 
@@ -88,11 +88,11 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void Tick_GivesDestinationPriorityToHigherUnitIdWhenSpeedsMatch()
         {
-            BattleBoard board = new BattleBoard(new HexMap(3, 1));
-            BattleUnit player = CreateUnit(1, Team.Player, new HexCoordinate(0, 0), 1f);
-            BattleUnit enemy = CreateUnit(2, Team.Enemy, new HexCoordinate(2, 0), 1f);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(3, 1));
+            AutoBattlerBattleUnit player = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0), 1f);
+            AutoBattlerBattleUnit enemy = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(2, 0), 1f);
             PlaceOpponents(board, player, enemy);
-            BattleMovementSystem movementSystem = CreateMovementSystem(board);
+            AutoBattlerBattleMovementSystem movementSystem = CreateMovementSystem(board);
 
             movementSystem.Tick(1f);
 
@@ -104,14 +104,14 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void Tick_CapsMoveGaugeWhileUnitCannotMove()
         {
-            BattleBoard board = new BattleBoard(new HexMap(4, 1));
-            BattleUnit player = CreateUnit(1, Team.Player, new HexCoordinate(0, 0), 10f);
-            BattleUnit enemy = CreateUnit(2, Team.Enemy, new HexCoordinate(3, 0), 0f);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(4, 1));
+            AutoBattlerBattleUnit player = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0), 10f);
+            AutoBattlerBattleUnit enemy = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(3, 0), 0f);
             PlaceOpponents(board, player, enemy);
-            BattleUnit blocker = CreateUnit(3, Team.Player, new HexCoordinate(1, 0), 0f);
-            blocker.AttackPhase = BattleAttackPhase.Animation;
+            AutoBattlerBattleUnit blocker = CreateUnit(3, AutoBattlerTeam.Player, new HexCoordinate(1, 0), 0f);
+            blocker.AttackPhase = AutoBattlerBattleAttackPhase.Animation;
             board.TryPlace(blocker, blocker.Coordinate);
-            BattleMovementSystem movementSystem = CreateMovementSystem(board);
+            AutoBattlerBattleMovementSystem movementSystem = CreateMovementSystem(board);
 
             movementSystem.Tick(1f);
             movementSystem.Tick(1f);
@@ -125,11 +125,11 @@ namespace AutoBattler.Combat.Tests
         [TestCase(true)]
         public void Tick_LaterUnitMovesIntoCoordinateVacatedByFasterUnit(bool reversePlacement)
         {
-            BattleBoard board = new BattleBoard(new HexMap(6, 2));
-            BattleUnit leader = CreateUnit(1, Team.Player, new HexCoordinate(1, 0), 2f);
-            BattleUnit follower = CreateUnit(9, Team.Player, new HexCoordinate(0, 0), 1f);
-            BattleUnit enemy = CreateUnit(3, Team.Enemy, new HexCoordinate(5, 0), 0f);
-            enemy.AttackPhase = BattleAttackPhase.Animation;
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(6, 2));
+            AutoBattlerBattleUnit leader = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(1, 0), 2f);
+            AutoBattlerBattleUnit follower = CreateUnit(9, AutoBattlerTeam.Player, new HexCoordinate(0, 0), 1f);
+            AutoBattlerBattleUnit enemy = CreateUnit(3, AutoBattlerTeam.Enemy, new HexCoordinate(5, 0), 0f);
+            enemy.AttackPhase = AutoBattlerBattleAttackPhase.Animation;
 
             if (reversePlacement)
             {
@@ -149,7 +149,7 @@ namespace AutoBattler.Combat.Tests
             Assert.That(leader.Coordinate, Is.EqualTo(new HexCoordinate(2, 0)));
             Assert.That(follower.Coordinate, Is.EqualTo(new HexCoordinate(1, 0)));
             Assert.That(board.IsOccupied(new HexCoordinate(0, 0)), Is.False);
-            Assert.That(board.TryGetUnit(new HexCoordinate(1, 0), out BattleUnit occupant), Is.True);
+            Assert.That(board.TryGetUnit(new HexCoordinate(1, 0), out AutoBattlerBattleUnit occupant), Is.True);
             Assert.That(occupant, Is.SameAs(follower));
             Assert.That(leader.MoveGauge, Is.EqualTo(1f));
             Assert.That(follower.MoveGauge, Is.EqualTo(0f));
@@ -159,9 +159,9 @@ namespace AutoBattler.Combat.Tests
         [TestCase(true)]
         public void Tick_HigherIdMovesFirstRegardlessOfPlacementOrder(bool reversePlacement)
         {
-            BattleBoard board = new BattleBoard(new HexMap(3, 1));
-            BattleUnit player = CreateUnit(1, Team.Player, new HexCoordinate(0, 0), 1f);
-            BattleUnit enemy = CreateUnit(2, Team.Enemy, new HexCoordinate(2, 0), 1f);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(3, 1));
+            AutoBattlerBattleUnit player = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0), 1f);
+            AutoBattlerBattleUnit enemy = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(2, 0), 1f);
 
             if (reversePlacement)
             {
@@ -185,11 +185,11 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void Tick_AttackingUnitClearsOutOfRangeTargetWithoutAcquiringOrMoving()
         {
-            BattleBoard board = new BattleBoard(new HexMap(4, 1));
-            BattleUnit player = CreateUnit(1, Team.Player, new HexCoordinate(0, 0), 1f);
-            BattleUnit enemy = CreateUnit(2, Team.Enemy, new HexCoordinate(3, 0), 0f);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(4, 1));
+            AutoBattlerBattleUnit player = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0), 1f);
+            AutoBattlerBattleUnit enemy = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(3, 0), 0f);
             PlaceOpponents(board, player, enemy);
-            player.AttackPhase = BattleAttackPhase.Cooldown;
+            player.AttackPhase = AutoBattlerBattleAttackPhase.Cooldown;
             player.MoveGauge = 0.75f;
 
             CreateMovementSystem(board).Tick(1f);
@@ -204,9 +204,9 @@ namespace AutoBattler.Combat.Tests
         [TestCase(true)]
         public void Tick_PreservesGaugeWhenTargetIsInRange(bool hasTarget)
         {
-            BattleBoard board = new BattleBoard(new HexMap(2, 1));
-            BattleUnit player = CreateUnit(1, Team.Player, new HexCoordinate(0, 0), 1f);
-            BattleUnit enemy = CreateUnit(2, Team.Enemy, new HexCoordinate(1, 0), 0f);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(2, 1));
+            AutoBattlerBattleUnit player = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0), 1f);
+            AutoBattlerBattleUnit enemy = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(1, 0), 0f);
             board.TryPlace(player, player.Coordinate);
             board.TryPlace(enemy, enemy.Coordinate);
             player.MoveGauge = 0.75f;
@@ -226,9 +226,9 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void Tick_AcquiresReachableTargetBeforeGaugeIsReady()
         {
-            BattleBoard board = new BattleBoard(new HexMap(4, 1));
-            BattleUnit player = CreateUnit(1, Team.Player, new HexCoordinate(0, 0), 0.5f);
-            BattleUnit enemy = CreateUnit(2, Team.Enemy, new HexCoordinate(3, 0), 0f);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(4, 1));
+            AutoBattlerBattleUnit player = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0), 0.5f);
+            AutoBattlerBattleUnit enemy = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(3, 0), 0f);
             board.TryPlace(player, player.Coordinate);
             board.TryPlace(enemy, enemy.Coordinate);
 
@@ -242,9 +242,9 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void Tick_DeadUnitDoesNotAccumulateGaugeOrMove()
         {
-            BattleBoard board = new BattleBoard(new HexMap(4, 1));
-            BattleUnit player = CreateUnit(1, Team.Player, new HexCoordinate(0, 0), 1f);
-            BattleUnit enemy = CreateUnit(2, Team.Enemy, new HexCoordinate(3, 0), 0f);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(4, 1));
+            AutoBattlerBattleUnit player = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0), 1f);
+            AutoBattlerBattleUnit enemy = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(3, 0), 0f);
             PlaceOpponents(board, player, enemy);
             player.IsAlive = false;
             player.MoveGauge = 0.5f;
@@ -263,9 +263,9 @@ namespace AutoBattler.Combat.Tests
         [TestCase(float.NegativeInfinity)]
         public void Tick_InvalidDurationDoesNotChangeState(float duration)
         {
-            BattleBoard board = new BattleBoard(new HexMap(4, 1));
-            BattleUnit player = CreateUnit(1, Team.Player, new HexCoordinate(0, 0), 1f);
-            BattleUnit enemy = CreateUnit(2, Team.Enemy, new HexCoordinate(3, 0), 0f);
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(4, 1));
+            AutoBattlerBattleUnit player = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0), 1f);
+            AutoBattlerBattleUnit enemy = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(3, 0), 0f);
             PlaceOpponents(board, player, enemy);
             player.MoveGauge = 0.5f;
 
@@ -279,29 +279,29 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void Tick_EmptyBoardDoesNotThrow()
         {
-            BattleBoard board = new BattleBoard(new HexMap(0, 0));
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(0, 0));
 
             Assert.DoesNotThrow(() => CreateMovementSystem(board).Tick(1f));
         }
 
-        static BattleMovementSystem CreateMovementSystem(BattleBoard board)
+        static AutoBattlerBattleMovementSystem CreateMovementSystem(AutoBattlerBattleBoard board)
         {
-            return new BattleMovementSystem(board, new BattleTargetingSystem(board, new BattlePathfinder()));
+            return new AutoBattlerBattleMovementSystem(board, new AutoBattlerBattleTargetingSystem(board, new AutoBattlerBattlePathfinder()));
         }
 
-        static BattleUnit CreateUnit(
+        static AutoBattlerBattleUnit CreateUnit(
             int id,
-            Team team,
+            AutoBattlerTeam team,
             HexCoordinate coordinate,
             float moveSpeed)
         {
-            return new BattleUnit(id, team, coordinate, 1, moveSpeed);
+            return new AutoBattlerBattleUnit(id, team, coordinate, 1, moveSpeed);
         }
 
         static void PlaceOpponents(
-            BattleBoard board,
-            BattleUnit player,
-            BattleUnit enemy)
+            AutoBattlerBattleBoard board,
+            AutoBattlerBattleUnit player,
+            AutoBattlerBattleUnit enemy)
         {
             board.TryPlace(player, player.Coordinate);
             board.TryPlace(enemy, enemy.Coordinate);

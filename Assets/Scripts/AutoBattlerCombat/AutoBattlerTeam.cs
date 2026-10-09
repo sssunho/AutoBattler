@@ -1,6 +1,6 @@
 namespace AutoBattler.Combat
 {
-    public enum Team
+    public enum AutoBattlerTeam
     {
         Player,
         Enemy

@@ -6,15 +6,15 @@ namespace AutoBattler.Combat.Tests
 {
     public sealed class BattlePathfinderTests
     {
-        readonly BattlePathfinder _pathfinder = new BattlePathfinder();
+        readonly AutoBattlerBattlePathfinder _pathfinder = new AutoBattlerBattlePathfinder();
         readonly List<HexCoordinate> _path = new List<HexCoordinate>();
 
         [Test]
         public void TryFindPathToAttackPosition_ReturnsShortestPath()
         {
-            BattleBoard board = new BattleBoard(new HexMap(4, 1));
-            BattleUnit mover = CreateUnit(1, Team.Player, new HexCoordinate(0, 0));
-            BattleUnit target = CreateUnit(2, Team.Enemy, new HexCoordinate(3, 0));
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(4, 1));
+            AutoBattlerBattleUnit mover = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0));
+            AutoBattlerBattleUnit target = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(3, 0));
             board.TryPlace(mover, mover.Coordinate);
             board.TryPlace(target, target.Coordinate);
 
@@ -31,9 +31,9 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryFindPathToAttackPosition_ReturnsEmptyPathWhenAlreadyInRange()
         {
-            BattleBoard board = new BattleBoard(new HexMap(2, 1));
-            BattleUnit mover = CreateUnit(1, Team.Player, new HexCoordinate(0, 0));
-            BattleUnit target = CreateUnit(2, Team.Enemy, new HexCoordinate(1, 0));
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(2, 1));
+            AutoBattlerBattleUnit mover = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0));
+            AutoBattlerBattleUnit target = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(1, 0));
             board.TryPlace(mover, mover.Coordinate);
             board.TryPlace(target, target.Coordinate);
             _path.Add(new HexCoordinate(1, 1));
@@ -47,10 +47,10 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryFindPathToAttackPosition_AvoidsOccupiedCoordinates()
         {
-            BattleBoard board = new BattleBoard(new HexMap(3, 2));
-            BattleUnit mover = CreateUnit(1, Team.Player, new HexCoordinate(0, 0));
-            BattleUnit target = CreateUnit(2, Team.Enemy, new HexCoordinate(2, 0));
-            BattleUnit blocker = CreateUnit(3, Team.Player, new HexCoordinate(1, 0));
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(3, 2));
+            AutoBattlerBattleUnit mover = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0));
+            AutoBattlerBattleUnit target = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(2, 0));
+            AutoBattlerBattleUnit blocker = CreateUnit(3, AutoBattlerTeam.Player, new HexCoordinate(1, 0));
             board.TryPlace(mover, mover.Coordinate);
             board.TryPlace(target, target.Coordinate);
             board.TryPlace(blocker, blocker.Coordinate);
@@ -68,10 +68,10 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryFindPathToAttackPosition_ReturnsFalseWhenNoRouteExists()
         {
-            BattleBoard board = new BattleBoard(new HexMap(4, 1));
-            BattleUnit mover = CreateUnit(1, Team.Player, new HexCoordinate(0, 0));
-            BattleUnit target = CreateUnit(2, Team.Enemy, new HexCoordinate(3, 0));
-            BattleUnit blocker = CreateUnit(3, Team.Player, new HexCoordinate(1, 0));
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(4, 1));
+            AutoBattlerBattleUnit mover = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0));
+            AutoBattlerBattleUnit target = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(3, 0));
+            AutoBattlerBattleUnit blocker = CreateUnit(3, AutoBattlerTeam.Player, new HexCoordinate(1, 0));
             board.TryPlace(mover, mover.Coordinate);
             board.TryPlace(target, target.Coordinate);
             board.TryPlace(blocker, blocker.Coordinate);
@@ -85,9 +85,9 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryFindPathToAttackPosition_RejectsUnregisteredUnit()
         {
-            BattleBoard board = new BattleBoard(new HexMap(3, 1));
-            BattleUnit mover = CreateUnit(1, Team.Player, new HexCoordinate(0, 0));
-            BattleUnit target = CreateUnit(2, Team.Enemy, new HexCoordinate(2, 0));
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(3, 1));
+            AutoBattlerBattleUnit mover = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0));
+            AutoBattlerBattleUnit target = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(2, 0));
             board.TryPlace(target, target.Coordinate);
 
             bool found = _pathfinder.TryFindPathToAttackPosition(board, mover, new[] { target }, _path, out _);
@@ -99,9 +99,9 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryFindPathToAttackPosition_RejectsFriendlyTarget()
         {
-            BattleBoard board = new BattleBoard(new HexMap(3, 1));
-            BattleUnit mover = CreateUnit(1, Team.Player, new HexCoordinate(0, 0));
-            BattleUnit target = CreateUnit(2, Team.Player, new HexCoordinate(2, 0));
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(3, 1));
+            AutoBattlerBattleUnit mover = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0));
+            AutoBattlerBattleUnit target = CreateUnit(2, AutoBattlerTeam.Player, new HexCoordinate(2, 0));
             board.TryPlace(mover, mover.Coordinate);
             board.TryPlace(target, target.Coordinate);
 
@@ -114,9 +114,9 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryFindPathToAttackPosition_DoesNotUseOccupiedTargetCoordinate()
         {
-            BattleBoard board = new BattleBoard(new HexMap(2, 1));
-            BattleUnit mover = new BattleUnit(1, Team.Player, new HexCoordinate(0, 0), 0, 1f);
-            BattleUnit target = CreateUnit(2, Team.Enemy, new HexCoordinate(1, 0));
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(2, 1));
+            AutoBattlerBattleUnit mover = new AutoBattlerBattleUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0), 0, 1f);
+            AutoBattlerBattleUnit target = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(1, 0));
             board.TryPlace(mover, mover.Coordinate);
             board.TryPlace(target, target.Coordinate);
 
@@ -130,16 +130,16 @@ namespace AutoBattler.Combat.Tests
         [TestCase(true)]
         public void TryFindPathToAttackPosition_PrefersHigherIdAcrossTheWholeNearestDepth(bool reverseTargets)
         {
-            BattleBoard board = new BattleBoard(new HexMap(7, 1));
-            BattleUnit mover = CreateUnit(1, Team.Player, new HexCoordinate(3, 0));
-            BattleUnit highId = CreateUnit(9, Team.Enemy, new HexCoordinate(0, 0));
-            BattleUnit lowId = CreateUnit(2, Team.Enemy, new HexCoordinate(6, 0));
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(7, 1));
+            AutoBattlerBattleUnit mover = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(3, 0));
+            AutoBattlerBattleUnit highId = CreateUnit(9, AutoBattlerTeam.Enemy, new HexCoordinate(0, 0));
+            AutoBattlerBattleUnit lowId = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(6, 0));
             board.TryPlace(mover, mover.Coordinate);
             board.TryPlace(lowId, lowId.Coordinate);
             board.TryPlace(highId, highId.Coordinate);
-            BattleUnit[] targets = reverseTargets ? new[] { highId, lowId } : new[] { lowId, highId };
+            AutoBattlerBattleUnit[] targets = reverseTargets ? new[] { highId, lowId } : new[] { lowId, highId };
 
-            bool found = _pathfinder.TryFindPathToAttackPosition(board, mover, targets, _path, out BattleUnit selected);
+            bool found = _pathfinder.TryFindPathToAttackPosition(board, mover, targets, _path, out AutoBattlerBattleUnit selected);
 
             Assert.That(found, Is.True);
             Assert.That(selected, Is.SameAs(highId));
@@ -153,16 +153,16 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryFindPathToAttackPosition_PrefersShorterPathOverHigherId()
         {
-            BattleBoard board = new BattleBoard(new HexMap(8, 1));
-            BattleUnit mover = CreateUnit(1, Team.Player, new HexCoordinate(3, 0));
-            BattleUnit near = CreateUnit(2, Team.Enemy, new HexCoordinate(0, 0));
-            BattleUnit far = CreateUnit(9, Team.Enemy, new HexCoordinate(7, 0));
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(8, 1));
+            AutoBattlerBattleUnit mover = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(3, 0));
+            AutoBattlerBattleUnit near = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(0, 0));
+            AutoBattlerBattleUnit far = CreateUnit(9, AutoBattlerTeam.Enemy, new HexCoordinate(7, 0));
             board.TryPlace(mover, mover.Coordinate);
             board.TryPlace(near, near.Coordinate);
             board.TryPlace(far, far.Coordinate);
 
             bool found = _pathfinder.TryFindPathToAttackPosition(
-                board, mover, new[] { far, near }, _path, out BattleUnit selected);
+                board, mover, new[] { far, near }, _path, out AutoBattlerBattleUnit selected);
 
             Assert.That(found, Is.True);
             Assert.That(selected, Is.SameAs(near));
@@ -173,10 +173,10 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryFindPathToAttackPosition_SelectsReachableEnemyOverCloserBlockedEnemy()
         {
-            BattleBoard board = new BattleBoard(new HexMap(5, 3));
-            BattleUnit mover = CreateUnit(1, Team.Player, new HexCoordinate(0, 1));
-            BattleUnit blocked = CreateUnit(9, Team.Enemy, new HexCoordinate(2, 0));
-            BattleUnit reachable = CreateUnit(2, Team.Enemy, new HexCoordinate(4, 2));
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(5, 3));
+            AutoBattlerBattleUnit mover = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 1));
+            AutoBattlerBattleUnit blocked = CreateUnit(9, AutoBattlerTeam.Enemy, new HexCoordinate(2, 0));
+            AutoBattlerBattleUnit reachable = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(4, 2));
             board.TryPlace(mover, mover.Coordinate);
             board.TryPlace(blocked, blocked.Coordinate);
             board.TryPlace(reachable, reachable.Coordinate);
@@ -190,12 +190,12 @@ namespace AutoBattler.Combat.Tests
 
             for (int i = 0; i < blockers.Length; i++)
             {
-                BattleUnit blocker = CreateUnit(10 + i, Team.Player, blockers[i]);
+                AutoBattlerBattleUnit blocker = CreateUnit(10 + i, AutoBattlerTeam.Player, blockers[i]);
                 board.TryPlace(blocker, blocker.Coordinate);
             }
 
             bool found = _pathfinder.TryFindPathToAttackPosition(
-                board, mover, new[] { blocked, reachable }, _path, out BattleUnit selected);
+                board, mover, new[] { blocked, reachable }, _path, out AutoBattlerBattleUnit selected);
 
             Assert.That(found, Is.True);
             Assert.That(selected, Is.SameAs(reachable));
@@ -211,14 +211,14 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryFindPathToAttackPosition_PreservesDirectionSimilarityDuringBacktracking()
         {
-            BattleBoard board = new BattleBoard(new HexMap(5, 3));
-            BattleUnit mover = CreateUnit(1, Team.Player, new HexCoordinate(0, 0));
-            BattleUnit target = CreateUnit(2, Team.Enemy, new HexCoordinate(4, 2));
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(5, 3));
+            AutoBattlerBattleUnit mover = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0));
+            AutoBattlerBattleUnit target = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(4, 2));
             board.TryPlace(mover, mover.Coordinate);
             board.TryPlace(target, target.Coordinate);
 
             bool found = _pathfinder.TryFindPathToAttackPosition(
-                board, mover, new[] { target }, _path, out BattleUnit selected);
+                board, mover, new[] { target }, _path, out AutoBattlerBattleUnit selected);
 
             Assert.That(found, Is.True);
             Assert.That(selected, Is.SameAs(target));
@@ -235,16 +235,16 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryFindPathToAttackPosition_ClearsPreviousResultWhenAllTargetsBecomeInvalid()
         {
-            BattleBoard board = new BattleBoard(new HexMap(4, 1));
-            BattleUnit mover = CreateUnit(1, Team.Player, new HexCoordinate(0, 0));
-            BattleUnit target = CreateUnit(2, Team.Enemy, new HexCoordinate(3, 0));
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(4, 1));
+            AutoBattlerBattleUnit mover = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0));
+            AutoBattlerBattleUnit target = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(3, 0));
             board.TryPlace(mover, mover.Coordinate);
             board.TryPlace(target, target.Coordinate);
-            BattleUnit[] targets = { target };
+            AutoBattlerBattleUnit[] targets = { target };
             Assert.That(_pathfinder.TryFindPathToAttackPosition(board, mover, targets, _path, out _), Is.True);
             target.IsAlive = false;
 
-            bool found = _pathfinder.TryFindPathToAttackPosition(board, mover, targets, _path, out BattleUnit selected);
+            bool found = _pathfinder.TryFindPathToAttackPosition(board, mover, targets, _path, out AutoBattlerBattleUnit selected);
 
             Assert.That(found, Is.False);
             Assert.That(selected, Is.Null);
@@ -254,13 +254,13 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryFindPathToAttackPosition_ReturnsFalseForEmptyCandidates()
         {
-            BattleBoard board = new BattleBoard(new HexMap(2, 1));
-            BattleUnit mover = CreateUnit(1, Team.Player, new HexCoordinate(0, 0));
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(2, 1));
+            AutoBattlerBattleUnit mover = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0));
             board.TryPlace(mover, mover.Coordinate);
             _path.Add(new HexCoordinate(1, 0));
 
             bool found = _pathfinder.TryFindPathToAttackPosition(
-                board, mover, new BattleUnit[0], _path, out BattleUnit selected);
+                board, mover, new AutoBattlerBattleUnit[0], _path, out AutoBattlerBattleUnit selected);
 
             Assert.That(found, Is.False);
             Assert.That(selected, Is.Null);
@@ -270,24 +270,24 @@ namespace AutoBattler.Combat.Tests
         [Test]
         public void TryFindPathToAttackPosition_SkipsInvalidCandidatesWhenValidEnemyExists()
         {
-            BattleBoard board = new BattleBoard(new HexMap(4, 1));
-            BattleUnit mover = CreateUnit(1, Team.Player, new HexCoordinate(0, 0));
-            BattleUnit target = CreateUnit(2, Team.Enemy, new HexCoordinate(3, 0));
-            BattleUnit unregistered = CreateUnit(9, Team.Enemy, new HexCoordinate(1, 0));
+            AutoBattlerBattleBoard board = new AutoBattlerBattleBoard(new HexMap(4, 1));
+            AutoBattlerBattleUnit mover = CreateUnit(1, AutoBattlerTeam.Player, new HexCoordinate(0, 0));
+            AutoBattlerBattleUnit target = CreateUnit(2, AutoBattlerTeam.Enemy, new HexCoordinate(3, 0));
+            AutoBattlerBattleUnit unregistered = CreateUnit(9, AutoBattlerTeam.Enemy, new HexCoordinate(1, 0));
             board.TryPlace(mover, mover.Coordinate);
             board.TryPlace(target, target.Coordinate);
 
             bool found = _pathfinder.TryFindPathToAttackPosition(
-                board, mover, new[] { null, mover, unregistered, target }, _path, out BattleUnit selected);
+                board, mover, new[] { null, mover, unregistered, target }, _path, out AutoBattlerBattleUnit selected);
 
             Assert.That(found, Is.True);
             Assert.That(selected, Is.SameAs(target));
             Assert.That(_path.Count, Is.EqualTo(2));
         }
 
-        static BattleUnit CreateUnit(int id, Team team, HexCoordinate coordinate)
+        static AutoBattlerBattleUnit CreateUnit(int id, AutoBattlerTeam team, HexCoordinate coordinate)
         {
-            return new BattleUnit(id, team, coordinate, 1, 1f);
+            return new AutoBattlerBattleUnit(id, team, coordinate, 1, 1f);
         }
     }
 }

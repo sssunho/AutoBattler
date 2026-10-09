@@ -7,8 +7,8 @@ using UnityEngine.EventSystems;
 namespace AutoBattler.Combat.Unity
 {
     [DefaultExecutionOrder(-100)]
-    [RequireComponent(typeof(BattleRunner))]
-    public sealed class BattlePlacementEditor : MonoBehaviour
+    [RequireComponent(typeof(AutoBattlerBattleRunner))]
+    public sealed class AutoBattlerBattlePlacementEditor : MonoBehaviour
     {
         static readonly Rect _panelRect = new Rect(10f, 10f, 270f, 250f);
 
@@ -16,22 +16,22 @@ namespace AutoBattler.Combat.Unity
         Camera _inputCamera;
 
         [SerializeField]
-        UnitDefinition _warriorDefinition;
+        AutoBattlerUnitDefinition _warriorDefinition;
 
         [SerializeField]
-        UnitDefinition _mageDefinition;
+        AutoBattlerUnitDefinition _mageDefinition;
 
         [SerializeField]
-        UnitDefinition _archerDefinition;
+        AutoBattlerUnitDefinition _archerDefinition;
 
-        readonly List<BattlePlacement> _placements = new List<BattlePlacement>();
-        readonly List<BattleUnitView> _placementViews = new List<BattleUnitView>();
+        readonly List<AutoBattlerBattlePlacement> _placements = new List<AutoBattlerBattlePlacement>();
+        readonly List<AutoBattlerBattleUnitView> _placementViews = new List<AutoBattlerBattleUnitView>();
         readonly Dictionary<HexCoordinate, int> _placementIndices = new Dictionary<HexCoordinate, int>();
 
-        BattleRunner _runner;
+        AutoBattlerBattleRunner _runner;
         HexMapView _mapView;
-        Team _selectedTeam = Team.Player;
-        UnitDefinition _selectedDefinition;
+        AutoBattlerTeam _selectedTeam = AutoBattlerTeam.Player;
+        AutoBattlerUnitDefinition _selectedDefinition;
         string _selectedUnitName = "Warrior";
         string _widthInput;
         string _heightInput;
@@ -40,7 +40,7 @@ namespace AutoBattler.Combat.Unity
 
         void Awake()
         {
-            _runner = GetComponent<BattleRunner>();
+            _runner = GetComponent<AutoBattlerBattleRunner>();
             _mapView = _runner.MapView;
             _selectedDefinition = _warriorDefinition;
 
@@ -116,11 +116,11 @@ namespace AutoBattler.Combat.Unity
             {
                 if (Input.GetKeyDown(KeyCode.Alpha1))
                 {
-                    _selectedTeam = Team.Player;
+                    _selectedTeam = AutoBattlerTeam.Player;
                 }
                 else if (Input.GetKeyDown(KeyCode.Alpha2))
                 {
-                    _selectedTeam = Team.Enemy;
+                    _selectedTeam = AutoBattlerTeam.Enemy;
                 }
                 else if (Input.GetKeyDown(KeyCode.Q))
                 {
@@ -176,13 +176,13 @@ namespace AutoBattler.Combat.Unity
                     _selectedDefinition,
                     _selectedTeam,
                     coordinate,
-                    out BattlePlacement placement))
+                    out AutoBattlerBattlePlacement placement))
                 {
                     _status = "Cannot place: check selected unit definition.";
                     return;
                 }
 
-                BattleUnitView view = _runner.CreatePlacementView(placement);
+                AutoBattlerBattleUnitView view = _runner.CreatePlacementView(placement);
 
                 if (view != null)
                 {
@@ -203,7 +203,7 @@ namespace AutoBattler.Combat.Unity
 
             GUILayout.BeginArea(_panelRect, GUI.skin.box);
             GUILayout.Label(_battleMode ? "Battle | F2: Restore placement" : "Placement | F1: Start battle");
-            GUILayout.Label(_selectedTeam == Team.Player ? "Team: Player (1)" : "Team: Enemy (2)");
+            GUILayout.Label(_selectedTeam == AutoBattlerTeam.Player ? "Team: Player (1)" : "Team: Enemy (2)");
             GUILayout.Label($"Unit: {_selectedUnitName}");
             GUILayout.Label("Q: Warrior | W: Mage | E: Archer");
             bool previousEnabled = GUI.enabled;
@@ -316,7 +316,7 @@ namespace AutoBattler.Combat.Unity
             _placementViews.Clear();
         }
 
-        void DestroyPlacementView(BattleUnitView view)
+        void DestroyPlacementView(AutoBattlerBattleUnitView view)
         {
             if (view != null)
             {
