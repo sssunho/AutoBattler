@@ -1,21 +1,2 @@
 ﻿ID,Desc
-BanditCaptainSpared,도적 대장을 죽이지 않고 살려보낸 적이 있다.
-MerchantRescued,위기에 처한 상인을 구한 적이 있다.
-VillageSaved,위기에 처한 마을을 구한 적이 있다.
-CaravanDefended,습격받은 대상단을 지켜낸 적이 있다.
-PrisonerReleased,붙잡힌 포로를 풀어준 적이 있다.
-RuinsExplored,오래된 폐허를 탐사한 적이 있다.
-ShrineRestored,훼손된 신전을 복구한 적이 있다.
-RelicReturned,주인을 잃은 유물을 원래 있어야 할 곳에 돌려놓았다.
-BanditHideoutDestroyed,도적단의 주요 은신처를 파괴한 적이 있다.
-MonsterNestDestroyed,위험한 괴물의 둥지를 제거한 적이 있다.
-NobleRescued,위기에 처한 귀족을 구한 적이 있다.
-RefugeesEscorted,피난민들을 안전한 장소까지 호위한 적이 있다.
-ForbiddenTombOpened,봉인되어 있던 금지된 무덤을 연 적이 있다.
-CursedObjectDestroyed,위험한 저주받은 물건을 파괴한 적이 있다.
-AncientGuardianAwakened,잠들어 있던 고대의 수호자를 깨운 적이 있다.
-ForestFireStopped,확산되던 산불을 막은 적이 있다.
-BridgeRepaired,끊어진 주요 다리를 복구하는 데 기여한 적이 있다.
-SmugglersExposed,밀수 조직의 활동을 세상에 드러낸 적이 있다.
-LostChildrenFound,실종된 아이들을 찾아 마을로 돌려보낸 적이 있다.
-MercenaryRivalsDefeated,경쟁 관계의 용병단을 공식적인 대결에서 꺾은 적이 있다.
+GiantApothecaryRecordsRecovered,거인의 약장이 묻힌 골짜기에서 오우거 두목을 쓰러뜨리고 재료 그림과 배합 비율이 새겨진 석판의 기록 및 온전한 약액 표본을 확보했다.
