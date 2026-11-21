@@ -1,0 +1,4 @@
+interface:
+  display_name: "Character Rigging"
+  short_description: "캐릭터 리깅과 손가락·턱·목 가중치 보정 및 FBX 검증"
+  default_prompt: "$character-rigging 스킬로 지정한 캐릭터의 리깅이나 가중치를 보정하고 원본 보존과 변형을 검증해줘."

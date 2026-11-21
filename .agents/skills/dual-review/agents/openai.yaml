@@ -1,0 +1,6 @@
+interface:
+  display_name: "독립·비판 리뷰"
+  short_description: "설계·코드를 두 리뷰어가 검토하고 위험 등급과 Pass/Fail 종합"
+  default_prompt: "$dual-review 스킬로 현재 설계 또는 코드에 대해 독립 리뷰어와 비판적 리뷰어에게 각각 리뷰를 받고 위험 등급과 최종 Pass/Fail을 정리해줘."
+policy:
+  allow_implicit_invocation: true

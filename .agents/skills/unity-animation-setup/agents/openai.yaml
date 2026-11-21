@@ -1,0 +1,4 @@
+interface:
+  display_name: "Unity Animation Setup"
+  short_description: "Unity 애니메이션 임포트·기존 에셋 설정·Rig 점검"
+  default_prompt: "$unity-animation-setup 스킬로 지정한 애니메이션을 Unity에 임포트하거나 기존 에셋에 프로젝트 설정을 적용해줘."

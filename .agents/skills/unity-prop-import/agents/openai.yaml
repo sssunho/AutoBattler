@@ -1,0 +1,4 @@
+interface:
+  display_name: "Unity 프랍 임포트"
+  short_description: "프랍 ZIP의 이름 정리와 PaintedCharacter 재질 연결을 자동화"
+  default_prompt: "$unity-prop-import 이 ZIP의 프랍을 임포트해줘. 경로와 이름을 지정하지 않으면 기본 규칙을 적용해줘."

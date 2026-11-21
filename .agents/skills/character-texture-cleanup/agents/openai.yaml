@@ -1,0 +1,4 @@
+interface:
+  display_name: "Character Texture Cleanup"
+  short_description: "기존 캐릭터 텍스처의 음영·하이라이트·붓결 정리와 재질색 보존"
+  default_prompt: "$character-texture-cleanup 스킬로 지정한 캐릭터 텍스처를 후처리하고 원본 외형·UV 보존과 모델 적용 결과를 확인해줘."
