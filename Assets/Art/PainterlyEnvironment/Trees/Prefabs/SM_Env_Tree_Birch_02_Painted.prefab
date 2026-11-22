@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &8471506513977724234
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 54566613362967640, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 54566613362967640, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 57ddea09bd1130940978748ac31a4023, type: 2}
+    - target: {fileID: 54566613362967640, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9bd9601ffa0534248b444e7cadc1be04, type: 2}
+    - target: {fileID: 797945852619002104, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: eb3b8c5fe55f0a740baeb0cf8f092e90, type: 2}
+    - target: {fileID: 2722828431853561642, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: de611fbfed866c844a979b712c8582b4, type: 2}
+    - target: {fileID: 3097441177180406635, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: c7c52349ee4d5ee44aa93713765263cb, type: 2}
+    - target: {fileID: 4592146552008279284, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4592146552008279284, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 57ddea09bd1130940978748ac31a4023, type: 2}
+    - target: {fileID: 4592146552008279284, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9bd9601ffa0534248b444e7cadc1be04, type: 2}
+    - target: {fileID: 4833613667383035372, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4833613667383035372, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 726d69922b17f724699c3941fe4b1d66, type: 2}
+    - target: {fileID: 4833613667383035372, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: eace6628cc9c2cb40949ff017cb457a8, type: 2}
+    - target: {fileID: 5521904053978251530, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: 0897bcfa465b3a341a8bb7542d4e11a2, type: 2}
+    - target: {fileID: 5592075822852266847, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: m_Name
+      value: SM_Env_Tree_Birch_02_Painted
+      objectReference: {fileID: 0}
+    - target: {fileID: 7844993387603133687, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: de611fbfed866c844a979b712c8582b4, type: 2}
+    - target: {fileID: 8262653308183919334, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8262653308183919334, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 57ddea09bd1130940978748ac31a4023, type: 2}
+    - target: {fileID: 8262653308183919334, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9bd9601ffa0534248b444e7cadc1be04, type: 2}
+    - target: {fileID: 8709299380567707612, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: 9196e701277f017438bd8316200d53e2, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 44bbd64fad9366947a1c9b68c15e1261, type: 3}

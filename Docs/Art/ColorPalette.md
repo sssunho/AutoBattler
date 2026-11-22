@@ -19,62 +19,62 @@
 | `light.ambient.equator` | #A8B0A3 | 〃 |
 | `light.ambient.ground` | #57614A | 〃 |
 | `atmos.fog` | #669CC9 | RenderSettings 안개 (Linear 67~176m) |
-| `atmos.sky.horizon` | #8CC0EC | `Sky_PaintedMeadow._Bottom_Color` |
-| `atmos.sky.zenith` | #084494 | `Sky_PaintedMeadow._Top_Color` (메인 시점에서 보이지 않음) |
+| `atmos.sky.horizon` | #8CC0EC | `M_Sky_Meadow._Bottom_Color` |
+| `atmos.sky.zenith` | #084494 | `M_Sky_Meadow._Top_Color` (메인 시점에서 보이지 않음) |
 | `atmos.camera.bg` | #73A3C7 | Main Camera 배경색 |
-| `atmos.vista.shade` | #C2D1E0 | `ValleyTerrain._FlatShadeTint` |
-| `atmos.vista.tint` | #FFFFFF (HDR 1.040, 1.065, 1.170) | `ValleyTerrain._Color_Tint` |
+| `atmos.vista.shade` | #C2D1E0 | `M_Vista_Terrain._FlatShadeTint` |
+| `atmos.vista.tint` | #FFFFFF (HDR 1.040, 1.065, 1.170) | `M_Vista_Terrain._Color_Tint` |
 
 ### 1.2 단계 틴트 — 녹색 계열 (잎·풀·지면)
 
 | 토큰 | 값 | 사용처 |
 | --- | --- | --- |
 | `band.leaf.lit` | #FFFFFF | 나뭇잎 `_BandLitColor` |
-| `band.leaf.mid` | #9CAD91 | `MeadowLeaf_Painted._BandMidColor` |
-| `band.leaf.shade` | #577570 | `MeadowLeaf_Painted._BandShadeColor` |
-| `band.leaf.birch.mid` | #879D7E | `BirchLeaf_Painted._BandMidColor` |
-| `band.leaf.birch.shade` | #3D655F | `BirchLeaf_Painted._BandShadeColor` |
-| `band.ground.lit` | #FFFFFF | `HeadlandTurf`, `ClearingEdge` `_BandLitColor` |
+| `band.leaf.mid` | #9CAD91 | `M_Tree_MeadowLeaf._BandMidColor` |
+| `band.leaf.shade` | #577570 | `M_Tree_MeadowLeaf._BandShadeColor` |
+| `band.leaf.birch.mid` | #879D7E | `M_Tree_BirchLeaf._BandMidColor` |
+| `band.leaf.birch.shade` | #3D655F | `M_Tree_BirchLeaf._BandShadeColor` |
+| `band.ground.lit` | #FFFFFF | `M_Ground_Turf`, `M_ClearingEdge` `_BandLitColor` |
 | `band.ground.shade` | #8AA89E | 〃 `_BandShadeColor` = `_BandMidColor` (단색 그림자) |
-| `band.grass.lit` | #F0F0F0 | `Grass*._GrassBandLitColor` |
-| `band.grass.shade` | #73948A | `Grass*._GrassBandShadeColor` = `_GrassBandMidColor` (단색 그림자) |
+| `band.grass.lit` | #F0F0F0 | `M_Grass_*._GrassBandLitColor` |
+| `band.grass.shade` | #73948A | `M_Grass_*._GrassBandShadeColor` = `_GrassBandMidColor` (단색 그림자) |
 
 ### 1.3 단계 틴트 — 무채색 계열 (바위·흙·소품·캐릭터)
 
 | 토큰 | 값 | 사용처 |
 | --- | --- | --- |
-| `band.neutral.lit` | #FFFFF7 (HDR 1.040, 1.020, 0.970) | `CampAndStone_Palette`, `Synty_DungeonRealms_01A_Painted` `_BandLitColor` |
-| `band.neutral.lit.canvas` | #F0F0E8 | `Camp_Canvas._BandLitColor` (천이 하얗게 날지 않도록) |
+| `band.neutral.lit` | #FFFFF7 (HDR 1.040, 1.020, 0.970) | `M_Prop_CampAtlas`, `Synty_DungeonRealms_01A_Painted` `_BandLitColor` |
+| `band.neutral.lit.canvas` | #F0F0E8 | `M_Prop_CampCanvas._BandLitColor` (천이 하얗게 날지 않도록) |
 | `band.neutral.mid` | #A8B8CC | 소품·캐릭터 `_BandMidColor`, 바위 `_RockBandMidColor` |
 | `band.neutral.shade` | #5C7594 | 소품·캐릭터 `_BandShadeColor` |
-| `band.rock.shade` | #788FA8 | `Stone_*._RockBandShadeColor` (역광 대비 완화로 소품보다 밝음) |
-| `band.path.shade` | #91A8C2 | `ClearingEdge`, `HeadlandTurf` `_PathBandShadeColor` = `_PathBandMidColor` |
+| `band.rock.shade` | #788FA8 | `M_Rock_*._RockBandShadeColor` (역광 대비 완화로 소품보다 밝음) |
+| `band.path.shade` | #91A8C2 | `M_ClearingEdge`, `M_Ground_Turf` `_PathBandShadeColor` = `_PathBandMidColor` |
 
 ### 1.4 고유색 (albedo)
 
 | 토큰 | 값 | 사용처 |
 | --- | --- | --- |
-| `albedo.leaf.meadow` | #274B1B | `MeadowLeaf_Painted._BaseAlbedoColor` |
-| `albedo.leaf.birch` | #264613 | `BirchLeaf_Painted._BaseAlbedoColor` |
-| `albedo.grass.low` | #8A9E60 | `GrassShort/Medium._LowColor` |
-| `albedo.grass.mid` | #92A561 | `GrassShort/Medium._MidColor`, `_HighColor`; `GrassTall._HighColor` |
-| `albedo.grass.tall.low` | #8B9D64 | `GrassTall._LowColor` |
-| `albedo.grass.tall.mid` | #7A9557 | `GrassTall._MidColor` |
-| `albedo.turf` | #889C5A | `HeadlandTurf._BaseColor` |
-| `albedo.turf.clearing` | #7A9747 | `ClearingEdge._BaseColor` |
-| `albedo.path` | #979A87 | `ClearingEdge._PathColor` (채도 낮은 흙 길) |
-| `albedo.path.headland` | #B58F69 | `HeadlandTurf._PathColor` (마스크 경로) |
-| `albedo.moss` | #73804F / #657142 | `HeadlandTurf` / `ClearingEdge` `_MossColor` |
-| `albedo.rock.bluff` | #929D9E | `Stone_BluffGranite._BaseColor` |
-| `albedo.rock.wall` | #99A3A8 | `Stone_RockWall._BaseColor` |
-| `albedo.rock.mossy` | #99A699 | `Stone_Mossy._BaseColor` |
-| `albedo.rock.field` | #9DA5AA | `Stone_Fieldstone._BaseColor` |
+| `albedo.leaf.meadow` | #274B1B | `M_Tree_MeadowLeaf._BaseAlbedoColor` |
+| `albedo.leaf.birch` | #264613 | `M_Tree_BirchLeaf._BaseAlbedoColor` |
+| `albedo.grass.low` | #8A9E60 | `M_Grass_Short/Medium._LowColor` |
+| `albedo.grass.mid` | #92A561 | `M_Grass_Short/Medium._MidColor`, `_HighColor`; `M_Grass_Tall._HighColor` |
+| `albedo.grass.tall.low` | #8B9D64 | `M_Grass_Tall._LowColor` |
+| `albedo.grass.tall.mid` | #7A9557 | `M_Grass_Tall._MidColor` |
+| `albedo.turf` | #889C5A | `M_Ground_Turf._BaseColor` |
+| `albedo.turf.clearing` | #7A9747 | `M_ClearingEdge._BaseColor` |
+| `albedo.path` | #979A87 | `M_ClearingEdge._PathColor` (채도 낮은 흙 길) |
+| `albedo.path.headland` | #B58F69 | `M_Ground_Turf._PathColor` (마스크 경로) |
+| `albedo.moss` | #73804F / #657142 | `M_Ground_Turf` / `M_ClearingEdge` `_MossColor` |
+| `albedo.rock.bluff` | #929D9E | `M_Rock_BluffGranite._BaseColor` |
+| `albedo.rock.wall` | #99A3A8 | `M_Rock_Wall._BaseColor` |
+| `albedo.rock.mossy` | #99A699 | `M_Rock_Mossy._BaseColor` |
+| `albedo.rock.field` | #9DA5AA | `M_Rock_Fieldstone._BaseColor` |
 
 ### 1.5 붓 터치 (지면 셰이더)
 
 | 토큰 | 값 | 사용처 |
 | --- | --- | --- |
-| `brush.warm` | #FFF2D1 / #FFE9C4 | `HeadlandTurf` / `ClearingEdge` `_WarmTint` |
+| `brush.warm` | #FFF2D1 / #FFE9C4 | `M_Ground_Turf` / `M_ClearingEdge` `_WarmTint` |
 | `brush.cool` | #DEF5FF / #D6EAFF | 〃 `_CoolTint` |
 
 ## 2. 후처리 색 보정
@@ -105,3 +105,4 @@
 | 날짜 | 변경 |
 | --- | --- |
 | 2026-11-22 | v1 작성. 사용자 조정값(바위 그림자 #788FA8, 바위 중간 #A8B8CC, 흙 그림자 #91A8C2) 반영 |
+| 2026-11-22 | 스터디 자산 프로덕션 정리에 맞춰 사용처의 머티리얼 이름을 새 이름(`M_*`)으로 갱신. 색 값 변경 없음. 이름 대응표는 [ArtBaseline.md](ArtBaseline.md) §9.1 |

@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: M_Grass_Short
+  m_Shader: {fileID: 4800000, guid: fbb7b41908ff30848ae9b1afe3a58559, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _ALPHATEST_ON
+  m_InvalidKeywords: []
+  m_LightmapFlags: 2
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 2450
+  stringTagMap:
+    RenderType: TransparentCutout
+  disabledShaderPasses:
+  - MOTIONVECTORS
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: 4d5ad89acbda26b4cbfcd131f29182d3, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: c8df7e36f2e606a468e1934e966ab862, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PaintMap:
+        m_Texture: {fileID: 2800000, guid: df4dd25fe10650545a28ff0321fda92b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BumpScale: 0.3
+    - _Cull: 0
+    - _Cutoff: 0.25
+    - _GrassBandLighting: 1
+    - _GrassBandLitThreshold: 0.55
+    - _GrassBandMidThreshold: 0.08
+    - _GrassBandSoftness: 0.06
+    - _GrassCard: 1
+    - _LeafDetail: 0
+    - _LightWrap: 0.6
+    - _NormalInfluence: 0.18
+    - _PaintScale: 0.1
+    - _PaintStrength: 1
+    m_Colors:
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _GrassBandLitColor: {r: 0.94, g: 0.94, b: 0.94, a: 1}
+    - _GrassBandMidColor: {r: 0.45, g: 0.58, b: 0.53999996, a: 1}
+    - _GrassBandShadeColor: {r: 0.45, g: 0.58, b: 0.54, a: 1}
+    - _HeightRange: {r: 0, g: 1.1, b: 0, a: 0}
+    - _HighColor: {r: 0.5712518, g: 0.6480518, b: 0.3784517, a: 1}
+    - _LightColor: {r: 1.0680152, g: 1.0599097, b: 1.0126314, a: 1}
+    - _LowColor: {r: 0.5417137, g: 0.6185138, b: 0.3745138, a: 1}
+    - _MidColor: {r: 0.5712518, g: 0.6480518, b: 0.3784517, a: 1}
+    - _ShadowColor: {r: 0.17180803, g: 0.47880864, b: 0.47400337, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
