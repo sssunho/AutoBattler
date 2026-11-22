@@ -19,6 +19,7 @@ Shader "RaggedBanner/Painted Environment"
         _KeepColor("Keep Original Color", Range(0, 1)) = 0
         _FacetStrength("Rock Facet Strength", Range(0, 1)) = 0.3
         _ValueSteps("Value Steps", Range(2, 12)) = 5
+        _AdditionalLightStepBlend("Additional Light Step Blend", Range(0, 1)) = 0.45
         _RockFacetJitter("Rock Facet Jitter", Range(0, 0.3)) = 0
         _RockBandMidThreshold("Rock Middle Band Threshold", Range(0.001, 0.98)) = 0.08
         _RockBandLitThreshold("Rock Bright Band Threshold", Range(0.01, 0.99)) = 0.45
@@ -75,6 +76,7 @@ Shader "RaggedBanner/Painted Environment"
             half _RockBandLitThreshold;
             half _RockBandSoftness;
             half _RockBandFormDetail;
+            half _AdditionalLightStepBlend;
             half4 _RockBandMidColor;
             half4 _RockBandShadeColor;
         CBUFFER_END
@@ -254,7 +256,7 @@ Shader "RaggedBanner/Painted Environment"
                 half diffuse = saturate(dot(normalWS, additionalLight.direction));
                 half steps = max(_ValueSteps - 1.0h, 1.0h);
                 half steppedDiffuse = floor(diffuse * steps + 0.5h) / steps;
-                diffuse = lerp(diffuse, steppedDiffuse, 0.45h);
+                diffuse = lerp(diffuse, steppedDiffuse, _AdditionalLightStepBlend);
                 float attenuation = additionalLight.distanceAttenuation * additionalLight.shadowAttenuation;
                 return _LightColor.rgb * additionalLight.color * (diffuse * attenuation);
             }
