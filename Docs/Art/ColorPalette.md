@@ -43,7 +43,7 @@
 
 | 토큰 | 값 | 사용처 |
 | --- | --- | --- |
-| `band.neutral.lit` | #FFFFF7 (HDR 1.040, 1.020, 0.970) | `M_Prop_CampAtlas`, `Synty_DungeonRealms_01A_Painted` `_BandLitColor` |
+| `band.neutral.lit` | #FFFFF7 (HDR 1.040, 1.020, 0.970) | `M_Prop_CampAtlas`(와 Variant `M_Prop_DungeonAtlas`·`M_Prop_DungeonRealmsAtlas`·`M_Prop_GenericAtlas`), `Synty_DungeonRealms_01A_Painted` `_BandLitColor` |
 | `band.neutral.lit.canvas` | #F0F0E8 | `M_Prop_CampCanvas._BandLitColor` (천이 하얗게 날지 않도록) |
 | `band.neutral.mid` | #A8B8CC | 소품·캐릭터 `_BandMidColor`, 바위 `_RockBandMidColor` |
 | `band.neutral.shade` | #5C7594 | 소품·캐릭터 `_BandShadeColor` |

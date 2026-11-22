@@ -41,6 +41,7 @@
 | 캠프 소품·캐릭터 (`Painted Character`) | 3단 | 0.45 | 밝은 면 안 형태 명암 0.09 |
 | 줄기·가지 | 기존 부드러운 단계 | — | 미정 (로드맵 5단계) |
 | 원경 지형 | 2톤(그림자 감쇠만) | — | 3단 명암은 효과가 미미해 채택하지 않음 |
+| 동굴 바닥 (`M_Ground_CaveFloor`) | 주광 2단 (단색 그림자), **추가 광원은 단계 없음** | 0.62 | `M_Rock_Wall` Variant. 평면에서 추가 광원 단계가 동심원 고리로 보여 `_AdditionalLightStepBlend = 0`(사용자 결정) |
 
 ### 3.3 팔레트 계열
 - **녹색 계열** (잎·풀·지면): 그림자 틴트는 청록, 중간 틴트는 채도 낮은 회녹.
@@ -90,6 +91,7 @@ FOV를 낮추면 같은 화면 크기를 유지하도록 카메라를 뒤로 빼
 | 셰이더 | 추가 기능 | 켜는 방법 |
 | --- | --- | --- |
 | `Rock/PaintedEnvironment.shader` | Rock 모드 3단 명암, 면 흔들림(`_RockFacetJitter`) | `_SurfaceKind = Rock`이면 항상 |
+| `Rock/PaintedEnvironment.shader` | 추가 광원(포인트 라이트 등) 단계 혼합 `_AdditionalLightStepBlend` | 기본 0.45(기존 동작). 0이면 단계 없는 그라데이션 |
 | `Grass/PaintedGrass.shader` + `PaintedGrassLighting.hlsl` | 3단 명암 (`_GrassBandLighting`) | 옵트인 토글 (기본 0) |
 | `Ground/PaintedGround.shader` (`RaggedBanner/Painted Ground`) | 공터 경계 단단함(`_ClearingEdgeSharpness`), 흙 전용 틴트(`_PathBandBlend`) | 기본 0. 현재 경계 0(번진 경계 선호), 흙 틴트 1 |
 | `Vista/PaintedVistaTerrain.shader` (`RaggedBanner/Painted Vista Terrain`) | 원경 지형 2톤 | — |
@@ -132,11 +134,11 @@ FOV를 낮추면 같은 화면 크기를 유지하도록 카메라를 뒤로 빼
 | 폴더 | 내용 |
 | --- | --- |
 | `Ground/` | `PaintedGround.shader`, `Materials/M_Ground_Turf` |
-| `Rock/` | `PaintedEnvironment.shader`(바위·줄기·가지 공용), `Materials/M_Rock_*` 4개 |
+| `Rock/` | `PaintedEnvironment.shader`(바위·줄기·가지 공용), `Materials/M_Rock_*` |
 | `Grass/` | `PaintedGrass.shader`, `Materials/M_Grass_Short/Medium/Tall`, **`Prefabs/SM_Env_Grass_*_Painted` 11개** |
 | `Trees/` | `PaintedTreeLeaves.shader`, `Materials/M_Tree_*`(근경 잎·카드·줄기·가지), `Materials/Far/`(원경 변형), `Meshes/*_Split`, `Textures/T_MeadowPaletteAtlas`, **`Prefabs/SM_Env_Tree_*_Painted` 5개** |
 | `Plants/Materials/` | `M_Flower_*` 6개, `M_Bush_*` 4개 |
-| `Props/Materials/` | `M_Prop_CampAtlas`(Synty 아틀라스 소품·돌무더기), `M_Prop_CampCanvas` |
+| `Props/Materials/` | `M_Prop_CampAtlas`(Synty 아틀라스 소품·돌무더기), `M_Prop_CampCanvas`. 팩별 아틀라스는 `M_Prop_CampAtlas`의 Material Variant로 `_BaseMap`만 바꾼다: `M_Prop_DungeonAtlas`(PolygonDungeon), `M_Prop_DungeonRealmsAtlas`(PolygonDungeonRealms), `M_Prop_GenericAtlas`(PolygonGeneric) |
 | `Vista/` | `PaintedVistaTerrain.shader`, `Materials/M_Vista_Terrain`, `M_Vista_River`(+부모 `M_Vista_RiverBase`) |
 | `Sky/Materials/` | `M_Sky_Meadow` |
 | `Character/` | `PaintedCharacter.shader` (변경 없음) |
