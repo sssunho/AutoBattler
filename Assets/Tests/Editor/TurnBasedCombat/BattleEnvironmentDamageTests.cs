@@ -122,7 +122,7 @@ namespace RaggedBanner.Combat.Tests
             Assert.That(battle.TryStartBattle(), Is.True);
             HexCoordinate first = skill == SkillType.PullSelf ? new HexCoordinate(1, 1) : new HexCoordinate(2, 1);
             Assert.That(battle.TryApplyGroundEffect(first, BattleGroundEffect.Burning, out _), Is.True);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, skill), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, skill), Is.True);
             Assert.That(battle.TryBeginMovementStep(out _), Is.True);
             int spentAp = actor.ActionPoints;
             Assert.That(battle.TryCompleteMovementStep(), Is.True);

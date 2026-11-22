@@ -123,7 +123,7 @@ namespace RaggedBanner.Combat
                 || !_board.TryGetUnit(_actingUnitId, out actor)
                 || actor.Coordinate != _movement.LeapPreview.Landing || !IsTargetInRange())
             {
-                FinishAssassinLeap();
+                FinishSkillMovement();
                 return;
             }
 
@@ -143,19 +143,8 @@ namespace RaggedBanner.Combat
 
             if (!_movement.WaitingForCompletion)
             {
-                FinishAssassinLeap();
+                FinishSkillMovement();
             }
-        }
-
-        void FinishAssassinLeap()
-        {
-            if (HasStartedAssassinLeap && _board.TryGetUnit(_actingUnitId, out HexCharacter actor))
-            {
-                Reveal(actor);
-            }
-
-            ClearMovement();
-            _phase = BattleActionPhase.Settling;
         }
     }
 }

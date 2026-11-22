@@ -18,7 +18,7 @@ namespace RaggedBanner.Combat
             _parents.Clear();
             _scores.Clear();
 
-            if ((skill != SkillType.PullSelf && skill != SkillType.PullTarget) || !line.IsValid)
+            if (!SkillTypeRules.IsPull(skill) || !line.IsValid)
             {
                 return false;
             }

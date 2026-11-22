@@ -98,10 +98,10 @@ namespace RaggedBanner.Combat.Tests
         [TestCase(SkillType.Overwatch)]
         [TestCase((SkillType)(-1))]
         [TestCase((SkillType)99)]
-        public void PioneerSelectionRejectsOtherSkillTypes(SkillType skill)
+        public void PullSelectionRejectsOtherSkillTypes(SkillType skill)
         {
-            Assert.That(_input.TryBeginPioneerSelection(skill), Is.False);
-            Assert.That(_input.IsSelectingPioneerSkill(skill), Is.False);
+            Assert.That(_input.TryBeginPullSelection(skill), Is.False);
+            Assert.That(_input.IsSelectingPullSkill(skill), Is.False);
             Assert.That(_input.IsSelectingAction, Is.False);
             Assert.That(_runner.IsSelectingAction, Is.False);
             Assert.That(_simulation.IsBusy, Is.False);
@@ -112,11 +112,11 @@ namespace RaggedBanner.Combat.Tests
         [TestCase(SkillType.PullTarget)]
         public void SelectionLocksCommandsAndCancelsWithoutSpending(SkillType skill)
         {
-            Assert.That(_input.TryBeginPioneerSelection(skill), Is.True);
-            Assert.That(_input.IsSelectingPioneerSkill(skill), Is.True);
+            Assert.That(_input.TryBeginPullSelection(skill), Is.True);
+            Assert.That(_input.IsSelectingPullSkill(skill), Is.True);
             Assert.That(_runner.IsSelectingAction, Is.True);
             Assert.That(_input.TryBeginStealthSelection(), Is.False);
-            Assert.That(_input.TryBeginPioneerSelection(skill), Is.False);
+            Assert.That(_input.TryBeginPullSelection(skill), Is.False);
             Assert.That(_runner.TryMove(_pioneer.Id, new HexCoordinate(1, 2)), Is.False);
             Assert.That(_runner.TryAttack(_pioneer.Id, _enemy.Id), Is.False);
             Assert.That(_runner.TryEndTurn(_pioneer.Id), Is.False);
@@ -137,7 +137,7 @@ namespace RaggedBanner.Combat.Tests
         {
             _map.transform.SetPositionAndRotation(new Vector3(1f, 0f, 2f), Quaternion.Euler(0f, 27f, 0f));
             _map.transform.localScale = new Vector3(1.3f, 1f, 0.8f);
-            Assert.That(_input.TryBeginPioneerSelection(skill), Is.True);
+            Assert.That(_input.TryBeginPullSelection(skill), Is.True);
             Assert.That(ConfirmCoordinate(_pioneer.Coordinate), Is.False);
             Assert.That(ConfirmCoordinate(_enemy.Coordinate), Is.True);
             Assert.That(_input.IsSelectingAction, Is.False);
@@ -145,16 +145,16 @@ namespace RaggedBanner.Combat.Tests
             Assert.That(_simulation.MovingUnitId, Is.EqualTo(skill == SkillType.PullSelf ? _pioneer.Id : _enemy.Id));
             Assert.That(_pioneer.ActionPoints, Is.EqualTo(4));
             Assert.That(_pioneer.HasUsedSkillMovementRecovery, Is.False);
-            Assert.That(_runner.TryConfirmPioneerSkill(_input, _simulation, _pioneer.Id, _enemy.Id, skill), Is.False);
+            Assert.That(_runner.TryConfirmPullSkill(_input, _simulation, _pioneer.Id, _enemy.Id, skill), Is.False);
         }
 
         [Test]
         public void WrongSkillCannotConfirmAnotherSelection()
         {
-            Assert.That(_input.TryBeginPioneerSelection(SkillType.PullSelf), Is.True);
-            Assert.That(_runner.TryConfirmPioneerSkill(_input, _simulation, _pioneer.Id,
+            Assert.That(_input.TryBeginPullSelection(SkillType.PullSelf), Is.True);
+            Assert.That(_runner.TryConfirmPullSkill(_input, _simulation, _pioneer.Id,
                 _enemy.Id, SkillType.PullTarget), Is.False);
-            Assert.That(_input.IsSelectingPioneerSkill(SkillType.PullSelf), Is.True);
+            Assert.That(_input.IsSelectingPullSkill(SkillType.PullSelf), Is.True);
             Assert.That(_simulation.IsBusy, Is.False);
         }
 
@@ -165,7 +165,7 @@ namespace RaggedBanner.Combat.Tests
         [TestCase("shutdown")]
         public void InvalidSelectionContextCannotCommit(string reason)
         {
-            Assert.That(_input.TryBeginPioneerSelection(SkillType.PullTarget), Is.True);
+            Assert.That(_input.TryBeginPullSelection(SkillType.PullTarget), Is.True);
             Assert.That(Hover(_enemy.Coordinate), Is.True);
 
             switch (reason)
@@ -190,8 +190,8 @@ namespace RaggedBanner.Combat.Tests
             }
 
             Assert.That(_input.IsSelectingAction, Is.False);
-            Assert.That(_input.TryGetPioneerContext(_runner, out _, out _, out _, out _), Is.False);
-            Assert.That(_runner.TryConfirmPioneerSkill(_input, _simulation, _pioneer.Id,
+            Assert.That(_input.TryGetPullContext(_runner, out _, out _, out _, out _), Is.False);
+            Assert.That(_runner.TryConfirmPullSkill(_input, _simulation, _pioneer.Id,
                 _enemy.Id, SkillType.PullTarget), Is.False);
         }
 
@@ -202,13 +202,13 @@ namespace RaggedBanner.Combat.Tests
             CreateRanges();
             Invoke(_ranges, "LateUpdate");
             BattleRangeMeshView normal = ((BattleRangePresentationLayer)GetField(_ranges, "_rangeLayer")).View;
-            Assert.That(_input.TryBeginPioneerSelection(skill), Is.True);
+            Assert.That(_input.TryBeginPullSelection(skill), Is.True);
             Assert.That(Hover(_enemy.Coordinate), Is.True);
             Invoke(_ranges, "LateUpdate");
-            BattleRangeMeshView view = ((BattleRangePresentationLayer)GetField(_ranges, "_pioneerLayer")).View;
+            BattleRangeMeshView view = ((BattleRangePresentationLayer)GetField(_ranges, "_pullLayer")).View;
             Mesh mesh = view.GetComponent<MeshFilter>().sharedMesh;
-            List<HexCoordinate> path = (List<HexCoordinate>)GetField(_ranges, "_pioneerPath");
-            List<HexCoordinate> landing = (List<HexCoordinate>)GetField(_ranges, "_pioneerLanding");
+            List<HexCoordinate> path = (List<HexCoordinate>)GetField(_ranges, "_pullPath");
+            List<HexCoordinate> landing = (List<HexCoordinate>)GetField(_ranges, "_pullLanding");
             Assert.That(path.Count, Is.EqualTo(2));
             Assert.That(landing[0], Is.EqualTo(new HexCoordinate(landingQ, 2)));
             Assert.That(mesh.vertexCount, Is.EqualTo(36));
@@ -229,10 +229,10 @@ namespace RaggedBanner.Combat.Tests
         public void PreviewIsRemovedWhenSelectedTargetDisappearsOrSelectionEnds()
         {
             CreateRanges();
-            Assert.That(_input.TryBeginPioneerSelection(SkillType.PullTarget), Is.True);
+            Assert.That(_input.TryBeginPullSelection(SkillType.PullTarget), Is.True);
             Assert.That(Hover(_enemy.Coordinate), Is.True);
             Invoke(_ranges, "LateUpdate");
-            BattleRangeMeshView view = ((BattleRangePresentationLayer)GetField(_ranges, "_pioneerLayer")).View;
+            BattleRangeMeshView view = ((BattleRangePresentationLayer)GetField(_ranges, "_pullLayer")).View;
             Assert.That(_runner.RemoveCharacter(_enemy.Id), Is.True);
             Invoke(_ranges, "LateUpdate");
             Assert.That(view.GetComponent<MeshRenderer>().enabled, Is.False);
@@ -254,21 +254,21 @@ namespace RaggedBanner.Combat.Tests
             _map.transform.SetPositionAndRotation(new Vector3(2f, 0f, 3f), Quaternion.Euler(0f, 31f, 0f));
             _map.transform.localScale = new Vector3(1.3f, 1f, 0.8f);
             CreateRanges();
-            Assert.That(_input.TryBeginPioneerSelection(skill), Is.True);
+            Assert.That(_input.TryBeginPullSelection(skill), Is.True);
             Vector2 center = HexLayout.AxialToLocal(_enemy.Coordinate, _map.HexSize);
             Vector3 firstScreen = _camera.WorldToScreenPoint(_map.transform.TransformPoint(
                 new Vector3(center.x, 0f, center.y + _map.HexSize * 0.35f)));
             Vector3 secondScreen = _camera.WorldToScreenPoint(_map.transform.TransformPoint(
                 new Vector3(center.x, 0f, center.y - _map.HexSize * 0.35f)));
-            Assert.That(_input.TryUpdatePioneerTarget(new Vector2(firstScreen.x, firstScreen.y)), Is.True);
-            Assert.That(_input.TryGetPioneerPath(_runner, _pioneer.Id, _enemy.Id, skill,
+            Assert.That(_input.TryUpdatePullTarget(new Vector2(firstScreen.x, firstScreen.y)), Is.True);
+            Assert.That(_input.TryGetPullPath(_runner, _pioneer.Id, _enemy.Id, skill,
                 out IReadOnlyList<HexCoordinate> first), Is.True);
             List<HexCoordinate> expected = new List<HexCoordinate>(first);
             Invoke(_ranges, "LateUpdate");
-            Assert.That((List<HexCoordinate>)GetField(_ranges, "_pioneerPath"), Is.EqualTo(expected));
+            Assert.That((List<HexCoordinate>)GetField(_ranges, "_pullPath"), Is.EqualTo(expected));
 
-            Assert.That(_input.TryUpdatePioneerTarget(new Vector2(secondScreen.x, secondScreen.y)), Is.True);
-            Assert.That(_input.TryGetPioneerPath(_runner, _pioneer.Id, _enemy.Id, skill,
+            Assert.That(_input.TryUpdatePullTarget(new Vector2(secondScreen.x, secondScreen.y)), Is.True);
+            Assert.That(_input.TryGetPullPath(_runner, _pioneer.Id, _enemy.Id, skill,
                 out IReadOnlyList<HexCoordinate> second), Is.True);
             Assert.That(second, Is.Not.EqualTo(expected));
             expected = new List<HexCoordinate>(second);
@@ -292,10 +292,10 @@ namespace RaggedBanner.Combat.Tests
         public void InvalidGroundAimClearsThePreviewAndCannotCommit(string reason)
         {
             CreateRanges();
-            Assert.That(_input.TryBeginPioneerSelection(SkillType.PullSelf), Is.True);
+            Assert.That(_input.TryBeginPullSelection(SkillType.PullSelf), Is.True);
             Assert.That(Hover(_enemy.Coordinate), Is.True);
             Invoke(_ranges, "LateUpdate");
-            BattleRangeMeshView view = ((BattleRangePresentationLayer)GetField(_ranges, "_pioneerLayer")).View;
+            BattleRangeMeshView view = ((BattleRangePresentationLayer)GetField(_ranges, "_pullLayer")).View;
             Vector3 screen = _camera.WorldToScreenPoint(_map.AxialToWorld(_pioneer.Coordinate));
             Vector2 position = new Vector2(screen.x, screen.y);
 
@@ -308,11 +308,11 @@ namespace RaggedBanner.Combat.Tests
                 position = new Vector2(float.NaN, 0f);
             }
 
-            Assert.That(_input.TryUpdatePioneerTarget(position), Is.False);
+            Assert.That(_input.TryUpdatePullTarget(position), Is.False);
             Invoke(_ranges, "LateUpdate");
             Assert.That(view.GetComponent<MeshRenderer>().enabled, Is.False);
-            Assert.That(_input.TryGetPioneerPath(_runner, _pioneer.Id, _enemy.Id, SkillType.PullSelf, out _), Is.False);
-            Assert.That(_runner.TryConfirmPioneerSkill(_input, _simulation, _pioneer.Id, _enemy.Id,
+            Assert.That(_input.TryGetPullPath(_runner, _pioneer.Id, _enemy.Id, SkillType.PullSelf, out _), Is.False);
+            Assert.That(_runner.TryConfirmPullSkill(_input, _simulation, _pioneer.Id, _enemy.Id,
                 SkillType.PullSelf), Is.False);
             Assert.That(_input.TryConfirmSelectedPosition(position), Is.False);
             Assert.That(_pioneer.ActionPoints, Is.EqualTo(4));
@@ -322,11 +322,11 @@ namespace RaggedBanner.Combat.Tests
         [Test]
         public void CancelledPreviewCannotConfirmAfterStartingAnotherSelection()
         {
-            Assert.That(_input.TryBeginPioneerSelection(SkillType.PullSelf), Is.True);
+            Assert.That(_input.TryBeginPullSelection(SkillType.PullSelf), Is.True);
             Assert.That(Hover(_enemy.Coordinate), Is.True);
             _input.CancelActionSelection();
-            Assert.That(_input.TryBeginPioneerSelection(SkillType.PullSelf), Is.True);
-            Assert.That(_runner.TryConfirmPioneerSkill(_input, _simulation, _pioneer.Id, _enemy.Id,
+            Assert.That(_input.TryBeginPullSelection(SkillType.PullSelf), Is.True);
+            Assert.That(_runner.TryConfirmPullSkill(_input, _simulation, _pioneer.Id, _enemy.Id,
                 SkillType.PullSelf), Is.False);
             Assert.That(_simulation.IsBusy, Is.False);
         }
@@ -343,7 +343,7 @@ namespace RaggedBanner.Combat.Tests
         bool Hover(HexCoordinate coordinate)
         {
             Vector3 screen = _camera.WorldToScreenPoint(_map.AxialToWorld(coordinate));
-            return _input.TryUpdatePioneerTarget(new Vector2(screen.x, screen.y));
+            return _input.TryUpdatePullTarget(new Vector2(screen.x, screen.y));
         }
 
         bool ConfirmCoordinate(HexCoordinate coordinate)

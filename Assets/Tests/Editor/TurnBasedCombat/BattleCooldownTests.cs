@@ -77,11 +77,11 @@ namespace RaggedBanner.Combat.Tests
         public void CancelBeforeFirstPullStepDoesNotStartCooldownAndFollowingStepsDoNotRestartIt()
         {
             BattleSimulation battle = Create(3, out HexCharacter actor, out HexCharacter target);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullSelf), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullSelf), Is.True);
             battle.CancelAction();
             Assert.That(actor.GetRemainingCooldown(SkillType.PullSelf), Is.Zero);
             Assert.That(actor.CooldownVersion, Is.Zero);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullSelf), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullSelf), Is.True);
             for (int i = 0; i < 3; i++)
             {
                 Assert.That(battle.TryBeginMovementStep(out _), Is.True);

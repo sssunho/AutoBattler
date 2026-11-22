@@ -117,9 +117,9 @@ namespace RaggedBanner.Combat
                 case SkillType.PullTarget:
                     allowed = TryGetOpponents(actor.Id, request.TargetId, out _, out HexCharacter pullTarget)
                         && IsVisibleTo(actor.Team, request.TargetId)
-                        && (request.Path != null ? IsValidPioneerPath(actor, pullTarget, request.Skill, request.Path)
-                            : TryBuildPioneerPath(actor, pullTarget, request.Skill,
-                                request.Line ?? GetPioneerCenterLine(actor, pullTarget), _skillQueryPath));
+                        && (request.Path != null ? IsValidPullPath(actor, pullTarget, request.Skill, request.Path)
+                            : TryBuildPullPath(actor, pullTarget, request.Skill,
+                                request.Line ?? GetPullCenterLine(actor, pullTarget), _skillQueryPath));
                     break;
                 case SkillType.AssassinLeap:
                     allowed = request.LeapPreview.HasValue
@@ -201,7 +201,7 @@ namespace RaggedBanner.Combat
                     break;
                 case SkillType.PullSelf:
                 case SkillType.PullTarget:
-                    accepted = ExecutePioneerSkill(actor.Id, request.TargetId, request.Skill, request.Path ?? _skillQueryPath);
+                    accepted = ExecutePullSkill(actor.Id, request.TargetId, request.Skill, request.Path ?? _skillQueryPath);
                     break;
                 case SkillType.AssassinLeap:
                     accepted = ExecuteAssassinLeap(actor.Id, request.TargetId, request.LeapPreview.Value);
@@ -280,21 +280,21 @@ namespace RaggedBanner.Combat
             return TryUseSkill(new SkillUseRequest(SkillType.AssassinLeap, unitId, targetId, leapPreview: preview));
         }
 
-        public bool TryPioneerSkill(int unitId, int targetId, SkillType skill)
+        public bool TryPullSkill(int unitId, int targetId, SkillType skill)
         {
-            return (skill == SkillType.PullSelf || skill == SkillType.PullTarget)
+            return SkillTypeRules.IsPull(skill)
                 && TryUseSkill(new SkillUseRequest(skill, unitId, targetId));
         }
 
-        public bool TryPioneerSkill(int unitId, int targetId, SkillType skill, BattlePathLine line)
+        public bool TryPullSkill(int unitId, int targetId, SkillType skill, BattlePathLine line)
         {
-            return (skill == SkillType.PullSelf || skill == SkillType.PullTarget)
+            return SkillTypeRules.IsPull(skill)
                 && TryUseSkill(new SkillUseRequest(skill, unitId, targetId, line: line));
         }
 
-        public bool TryPioneerSkill(int unitId, int targetId, SkillType skill, IReadOnlyList<HexCoordinate> path)
+        public bool TryPullSkill(int unitId, int targetId, SkillType skill, IReadOnlyList<HexCoordinate> path)
         {
-            return (skill == SkillType.PullSelf || skill == SkillType.PullTarget) && path != null
+            return SkillTypeRules.IsPull(skill) && path != null
                 && TryUseSkill(new SkillUseRequest(skill, unitId, targetId, path: path));
         }
     }

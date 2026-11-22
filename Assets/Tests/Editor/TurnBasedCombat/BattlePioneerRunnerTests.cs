@@ -190,11 +190,11 @@ namespace RaggedBanner.Combat.Tests
 
         void Queue(SkillType skill)
         {
-            Assert.That(_input.TryBeginPioneerSelection(skill), Is.True);
+            Assert.That(_input.TryBeginPullSelection(skill), Is.True);
             Camera camera = (Camera)GetField(_input, "_inputCamera");
             Vector3 screen = camera.WorldToScreenPoint(_map.AxialToWorld(_target.Coordinate));
-            Assert.That(_input.TryUpdatePioneerTarget(new Vector2(screen.x, screen.y)), Is.True);
-            Assert.That(_runner.TryConfirmPioneerSkill(_input, _simulation, _pioneer.Id, _target.Id, skill), Is.True);
+            Assert.That(_input.TryUpdatePullTarget(new Vector2(screen.x, screen.y)), Is.True);
+            Assert.That(_runner.TryConfirmPullSkill(_input, _simulation, _pioneer.Id, _target.Id, skill), Is.True);
         }
 
         void Tick(float deltaTime)

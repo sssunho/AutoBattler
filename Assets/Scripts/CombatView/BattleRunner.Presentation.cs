@@ -22,7 +22,7 @@ namespace RaggedBanner.Combat.Unity
             HexMovementStep _step;
             bool _hasStep;
             uint _actingDisableVersion;
-            uint _pioneerTargetDisableVersion;
+            uint _pullTargetDisableVersion;
             uint _assassinTargetDisableVersion;
             int _movementViewUnitId;
 
@@ -46,7 +46,7 @@ namespace RaggedBanner.Combat.Unity
 
                 if (movesTarget)
                 {
-                    _pioneerTargetDisableVersion = target.DisableVersion;
+                    _pullTargetDisableVersion = target.DisableVersion;
                     _movementViewUnitId = simulation.MovingUnitId;
                 }
                 else if (leap)
@@ -62,7 +62,7 @@ namespace RaggedBanner.Combat.Unity
                 _hasStep = false;
                 _step = default;
                 _actingDisableVersion = 0;
-                _pioneerTargetDisableVersion = 0;
+                _pullTargetDisableVersion = 0;
                 _assassinTargetDisableVersion = 0;
                 _movementViewUnitId = 0;
             }
@@ -77,7 +77,7 @@ namespace RaggedBanner.Combat.Unity
                 BattleSimulation simulation = _owner._simulation;
                 int unitId = simulation.ActingUnitId;
                 bool wasReaction = simulation.HasPendingReactions;
-                bool wasPioneer = simulation.IsPioneerMovement;
+                bool wasPull = simulation.IsPullMovement;
                 bool wasAssassinLeap = simulation.IsAssassinLeap;
 
                 if (simulation.MovingUnitId != 0)
@@ -103,7 +103,7 @@ namespace RaggedBanner.Combat.Unity
                     return;
                 }
 
-                ClearPresentation(unitId, !wasReaction && !wasPioneer && !wasAssassinLeap);
+                ClearPresentation(unitId, !wasReaction && !wasPull && !wasAssassinLeap);
 
                 if (_owner._simulation == simulation)
                 {
@@ -164,8 +164,8 @@ namespace RaggedBanner.Combat.Unity
                     _owner._views.TryGetValue(simulation.MovingUnitId, out HexCharacterView movingView);
 
                     if (simulation.IsAssassinLeap && !IsAssassinLeapPresentationReady(simulation)
-                        || simulation.IsPioneerMovement && !IsPioneerPresentationReady(simulation)
-                        || !simulation.IsAssassinLeap && !simulation.IsPioneerMovement && simulation.TargetUnitId == 0
+                        || simulation.IsPullMovement && !IsPullPresentationReady(simulation)
+                        || !simulation.IsAssassinLeap && !simulation.IsPullMovement && simulation.TargetUnitId == 0
                         && (movingView == null || !movingView.IsReady || movingView.DisableVersion != _actingDisableVersion))
                     {
                         FinishActionWithoutPresentation();
@@ -243,12 +243,12 @@ namespace RaggedBanner.Combat.Unity
                 }
             }
 
-            bool IsPioneerPresentationReady(BattleSimulation simulation)
+            bool IsPullPresentationReady(BattleSimulation simulation)
             {
                 return _owner._views.TryGetValue(simulation.ActingUnitId, out HexCharacterView actor)
                     && actor != null && actor.IsReady && actor.DisableVersion == _actingDisableVersion
                     && _owner._views.TryGetValue(simulation.TargetUnitId, out HexCharacterView target)
-                    && target != null && target.IsReady && target.DisableVersion == _pioneerTargetDisableVersion;
+                    && target != null && target.IsReady && target.DisableVersion == _pullTargetDisableVersion;
             }
 
             bool IsAssassinLeapPresentationReady(BattleSimulation simulation)
@@ -478,7 +478,7 @@ namespace RaggedBanner.Combat.Unity
 
                 while (remainingTime > 0f && _owner.CanContinuePresentation(simulation))
                 {
-                    if (simulation.IsPioneerMovement && !IsPioneerPresentationReady(simulation)
+                    if (simulation.IsPullMovement && !IsPullPresentationReady(simulation)
                         || simulation.IsAssassinLeap && !IsAssassinLeapPresentationReady(simulation))
                     {
                         FinishActionWithoutPresentation();
@@ -502,7 +502,7 @@ namespace RaggedBanner.Combat.Unity
                         _hasStep = true;
                         _movementViewUnitId = _step.UnitId;
 
-                        if (simulation.IsPioneerMovement
+                        if (simulation.IsPullMovement
                             && _owner._views.TryGetValue(simulation.ActingUnitId, out HexCharacterView actor) && actor != null)
                         {
                             actor.ApplyFacing();
@@ -519,7 +519,7 @@ namespace RaggedBanner.Combat.Unity
                         return;
                     }
 
-                    if (simulation.IsPioneerMovement && !IsPioneerPresentationReady(simulation)
+                    if (simulation.IsPullMovement && !IsPullPresentationReady(simulation)
                         || simulation.IsAssassinLeap && !IsAssassinLeapPresentationReady(simulation))
                     {
                         FinishActionWithoutPresentation();
@@ -537,7 +537,7 @@ namespace RaggedBanner.Combat.Unity
                     }
                     else
                     {
-                        if (simulation.TargetUnitId == 0 || simulation.IsPioneerMovement || simulation.IsAssassinLeap)
+                        if (simulation.TargetUnitId == 0 || simulation.IsPullMovement || simulation.IsAssassinLeap)
                         {
                             FinishActionWithoutPresentation();
                             return;

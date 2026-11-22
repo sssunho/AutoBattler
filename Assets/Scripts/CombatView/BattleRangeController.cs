@@ -14,8 +14,8 @@ namespace RaggedBanner.Combat.Unity
         static readonly Color _stealthReadyColor = new Color(0.25f, 1f, 0.65f, 0.5f);
         static readonly Color _stealthBlockedColor = new Color(1f, 0.25f, 0.3f, 0.6f);
         static readonly Color _ambushColor = new Color(0.7f, 0.4f, 1f, 0.6f);
-        static readonly Color _pioneerPathColor = new Color(0.15f, 0.75f, 1f, 0.4f);
-        static readonly Color _pioneerLandingColor = new Color(1f, 0.9f, 0.2f, 0.65f);
+        static readonly Color _pullPathColor = new Color(0.15f, 0.75f, 1f, 0.4f);
+        static readonly Color _skillLandingColor = new Color(1f, 0.9f, 0.2f, 0.65f);
         static readonly Color _movementPathColor = new Color(0.15f, 0.75f, 1f, 0.3f);
         static readonly Color _movementLandingColor = new Color(1f, 0.9f, 0.2f, 0.65f);
 
@@ -42,8 +42,8 @@ namespace RaggedBanner.Combat.Unity
         readonly List<HexCoordinate> _detectionCells = new List<HexCoordinate>();
         readonly List<HexCoordinate> _stealthMarkers = new List<HexCoordinate>();
         readonly HashSet<HexCoordinate> _detectionUnion = new HashSet<HexCoordinate>();
-        readonly List<HexCoordinate> _pioneerPath = new List<HexCoordinate>(3);
-        readonly List<HexCoordinate> _pioneerLanding = new List<HexCoordinate>(1);
+        readonly List<HexCoordinate> _pullPath = new List<HexCoordinate>(3);
+        readonly List<HexCoordinate> _pullLanding = new List<HexCoordinate>(1);
         readonly List<HexCoordinate> _movementPath = new List<HexCoordinate>();
         readonly List<HexCoordinate> _movementLanding = new List<HexCoordinate>(1);
         readonly List<HexCoordinate> _assassinLanding = new List<HexCoordinate>(1);
@@ -51,7 +51,7 @@ namespace RaggedBanner.Combat.Unity
         readonly BattleRangePresentationLayer _rangeLayer = new BattleRangePresentationLayer("Battle Ground Ranges");
         readonly BattleRangePresentationLayer _overwatchLayer = new BattleRangePresentationLayer("Battle Overwatch Ranges");
         readonly BattleRangePresentationLayer _stealthLayer = new BattleRangePresentationLayer("Battle Detection Ranges");
-        readonly BattleRangePresentationLayer _pioneerLayer = new BattleRangePresentationLayer("Battle Pioneer Path");
+        readonly BattleRangePresentationLayer _pullLayer = new BattleRangePresentationLayer("Battle Pull Path");
         readonly BattleRangePresentationLayer _movementPathLayer = new BattleRangePresentationLayer("Battle Movement Path");
         readonly BattleRangePresentationLayer _assassinLayer = new BattleRangePresentationLayer("Battle Assassin Landing");
         readonly BattleRangePresentationLayer _spiritPathLayer = new BattleRangePresentationLayer("Battle Spirit Path");
@@ -113,7 +113,7 @@ namespace RaggedBanner.Combat.Unity
             _viewMap = map;
             UpdateOverwatchPresentation(map);
             UpdateStealthPresentation(map);
-            UpdatePioneerPresentation(map);
+            UpdatePullPresentation(map);
             UpdateAssassinPresentation(map);
             UpdateMovementPathPresentation(map);
             UpdateSpiritPathPresentation(map);
@@ -226,28 +226,28 @@ namespace RaggedBanner.Combat.Unity
                 _movementPathColor, _movementLandingColor);
         }
 
-        void UpdatePioneerPresentation(HexMapView map)
+        void UpdatePullPresentation(HexMapView map)
         {
-            if (!_input.TryGetPioneerContext(_runner, out _,
+            if (!_input.TryGetPullContext(_runner, out _,
                 out HexCharacter unit, out SkillType skill, out int targetId)
-                || targetId == 0 || !_input.TryGetPioneerPath(_runner, unit.Id, targetId, skill,
+                || targetId == 0 || !_input.TryGetPullPath(_runner, unit.Id, targetId, skill,
                     out IReadOnlyList<HexCoordinate> path) || path.Count == 0)
             {
-                _pioneerLayer.Invalidate();
+                _pullLayer.Invalidate();
                 return;
             }
 
-            _pioneerPath.Clear();
+            _pullPath.Clear();
 
             for (int i = 0; i < path.Count; i++)
             {
-                _pioneerPath.Add(path[i]);
+                _pullPath.Add(path[i]);
             }
 
-            _pioneerLanding.Clear();
-            _pioneerLanding.Add(_pioneerPath[_pioneerPath.Count - 1]);
-            _pioneerLayer.ShowFilled(map, _pioneerPath, _pioneerLanding, _material,
-                _pioneerPathColor, _pioneerLandingColor);
+            _pullLanding.Clear();
+            _pullLanding.Add(_pullPath[_pullPath.Count - 1]);
+            _pullLayer.ShowFilled(map, _pullPath, _pullLanding, _material,
+                _pullPathColor, _skillLandingColor);
         }
 
         void UpdateAssassinPresentation(HexMapView map)
@@ -261,7 +261,7 @@ namespace RaggedBanner.Combat.Unity
             _assassinLanding.Clear();
             _assassinLanding.Add(preview.Landing);
             _assassinLayer.ShowFilled(map, _assassinLanding, _assassinLanding, _material,
-                _pioneerLandingColor, _pioneerLandingColor);
+                _skillLandingColor, _skillLandingColor);
         }
 
         void UpdateStealthPresentation(HexMapView map)
@@ -536,7 +536,7 @@ namespace RaggedBanner.Combat.Unity
             _rangeLayer.Hide();
             _overwatchLayer.Hide();
             _stealthLayer.Hide();
-            _pioneerLayer.Hide();
+            _pullLayer.Hide();
             _movementPathLayer.Hide();
             _assassinLayer.Hide();
             _spiritPathLayer.Hide();
@@ -555,7 +555,7 @@ namespace RaggedBanner.Combat.Unity
             _rangeLayer.Invalidate();
             _overwatchLayer.Invalidate();
             _stealthLayer.Invalidate();
-            _pioneerLayer.Invalidate();
+            _pullLayer.Invalidate();
             _movementPathLayer.Invalidate();
             _assassinLayer.Invalidate();
             _spiritPathLayer.Invalidate();
@@ -567,7 +567,7 @@ namespace RaggedBanner.Combat.Unity
             _rangeLayer.Release();
             _overwatchLayer.Release();
             _stealthLayer.Release();
-            _pioneerLayer.Release();
+            _pullLayer.Release();
             _movementPathLayer.Release();
             _assassinLayer.Release();
             _spiritPathLayer.Release();
@@ -587,8 +587,8 @@ namespace RaggedBanner.Combat.Unity
             _detectionCells.Clear();
             _stealthMarkers.Clear();
             _detectionUnion.Clear();
-            _pioneerPath.Clear();
-            _pioneerLanding.Clear();
+            _pullPath.Clear();
+            _pullLanding.Clear();
             _movementPath.Clear();
             _movementLanding.Clear();
         }

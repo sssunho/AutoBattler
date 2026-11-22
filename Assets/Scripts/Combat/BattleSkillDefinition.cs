@@ -62,7 +62,7 @@ namespace RaggedBanner.Combat
                 || type != SkillType.BasicAttack && damage != 0
                 || type != SkillType.Stealth && movementCost != 0
                 || type != SkillType.Ambush && damageBonus != 0
-                || (type == SkillType.PullSelf || type == SkillType.PullTarget) && minRange < 2)
+                || SkillTypeRules.IsPull(type) && minRange < 2)
             {
                 throw new ArgumentException("The skill definition contains incompatible targeting or effect settings.");
             }

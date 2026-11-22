@@ -8,5 +8,10 @@ namespace RaggedBanner.Combat
         {
             return (uint)type < Capacity;
         }
+
+        public static bool IsPull(SkillType type)
+        {
+            return type == SkillType.PullSelf || type == SkillType.PullTarget;
+        }
     }
 }

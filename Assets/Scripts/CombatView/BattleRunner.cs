@@ -754,11 +754,11 @@ namespace RaggedBanner.Combat.Unity
             return TryConfirmSelectedSkill(input, simulation, new SkillUseRequest(SkillType.Stealth, unitId));
         }
 
-        internal bool TryConfirmPioneerSkill(BattleInputController input, BattleSimulation simulation,
+        internal bool TryConfirmPullSkill(BattleInputController input, BattleSimulation simulation,
             int unitId, int targetId, SkillType skill)
         {
             return ReferenceEquals(simulation, _simulation) && input != null
-                && input.TryGetPioneerPath(this, unitId, targetId, skill, out _)
+                && input.TryGetPullPath(this, unitId, targetId, skill, out _)
                 && TryConfirmSkillPreview(input);
         }
 
@@ -884,7 +884,7 @@ namespace RaggedBanner.Combat.Unity
 
             if (_simulation.IsBusy)
             {
-                return _simulation.Phase == BattleActionPhase.Moving && !_simulation.IsPioneerMovement
+                return _simulation.Phase == BattleActionPhase.Moving && !_simulation.IsPullMovement
                     && !_simulation.IsAssassinLeap
                     && _simulation.Board.TryGetUnit(_simulation.ActingUnitId, out HexCharacter actor)
                     && actor.Team == BattleTeam.Player && actor.Health > 0
@@ -956,7 +956,7 @@ namespace RaggedBanner.Combat.Unity
             }
 
             if (!CanAcceptCommands() || _simulation.HasPendingReactions
-                || _simulation.HasStartedPioneerMovement
+                || _simulation.HasStartedPullMovement
                 || _simulation.HasStartedAssassinLeap
                 || _simulation.Phase == BattleActionPhase.Settling)
             {

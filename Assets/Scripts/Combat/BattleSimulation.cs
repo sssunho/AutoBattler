@@ -24,7 +24,6 @@ namespace RaggedBanner.Combat
 
         bool _turnAdvancePending;
         bool _stopAfterAttack;
-        bool _queuedAmbush;
         uint _visibilityVersion;
         int _lastUnitId;
         int _actingUnitId;
@@ -46,9 +45,9 @@ namespace RaggedBanner.Combat
         public BattleActionPhase Phase => _phase;
         public int ActingUnitId => _phase == BattleActionPhase.Attacking ? _attackExecution.Context.AttackerId : _actingUnitId;
         public int MovingUnitId => _phase == BattleActionPhase.Moving ? _movement.MoverId : 0;
-        public bool IsPioneerMovement => _skillExecution != null
-            && (_skillExecution.Definition.Type == SkillType.PullSelf || _skillExecution.Definition.Type == SkillType.PullTarget);
-        public bool HasStartedPioneerMovement => IsPioneerMovement && _skillExecution.HasStartedMovement;
+        bool IsQueuedAmbush => _skillExecution != null && _skillExecution.Definition.Type == SkillType.Ambush;
+        bool IsSkillMovement => IsPullMovement || IsAssassinLeap;
+        bool HasStartedSkillMovement => IsSkillMovement && _skillExecution.HasStartedMovement;
 
         public int TargetUnitId => _phase == BattleActionPhase.Attacking ? _attackExecution.Context.TargetId : _targetUnitId;
         public bool HasPendingReactions => _reactions.IsActive;
@@ -193,16 +192,11 @@ namespace RaggedBanner.Combat
             }
 
             if (IsAssassinLeap && (_state == BattleState.Waiting || wasCurrent
-                || unitId == _actingUnitId || unitId == _targetUnitId))
+                    || unitId == _actingUnitId || unitId == _targetUnitId)
+                || IsPullMovement && (_state == BattleState.Waiting || wasCurrent
+                    || unitId == _actingUnitId || unitId == _targetUnitId || unitId == _movement.MoverId))
             {
-                StopAssassinLeap();
-                return true;
-            }
-
-            if (IsPioneerMovement && (_state == BattleState.Waiting || wasCurrent
-                || unitId == _actingUnitId || unitId == _targetUnitId || unitId == _movement.MoverId))
-            {
-                StopPioneerMovement();
+                StopSkillMovement();
                 return true;
             }
 
@@ -289,7 +283,6 @@ namespace RaggedBanner.Combat
             _movement.DiscardRemainingPath();
             _actingUnitId = attackerId;
             _targetUnitId = targetId;
-            _queuedAmbush = true;
             _phase = BattleActionPhase.ReadyToAttack;
             return true;
         }
@@ -400,108 +393,6 @@ namespace RaggedBanner.Combat
             return true;
         }
 
-        public bool CanSelectPioneerSkill(int unitId)
-        {
-            return CanSelectSkill(unitId, SkillType.PullSelf).CanUse
-                || CanSelectSkill(unitId, SkillType.PullTarget).CanUse;
-        }
-
-        public bool CanUsePioneerSkill(int actorId, int targetId, SkillType skill)
-        {
-            return TryCopyPioneerPath(actorId, targetId, skill, null);
-        }
-
-        public bool TryCopyPioneerPath(int actorId, int targetId, SkillType skill,
-            List<HexCoordinate> destination)
-        {
-            destination?.Clear();
-            return (skill == SkillType.PullSelf || skill == SkillType.PullTarget) && CanSelectSkill(actorId, skill).CanUse
-                && TryGetOpponents(actorId, targetId, out HexCharacter actor, out HexCharacter target)
-                && IsVisibleTo(actor.Team, targetId)
-                && TryBuildPioneerPath(actor, target, skill, GetPioneerCenterLine(actor, target), destination);
-        }
-
-        public bool TryCopyPioneerPath(int actorId, int targetId, SkillType skill,
-            BattlePathLine line, List<HexCoordinate> destination)
-        {
-            destination?.Clear();
-            return (skill == SkillType.PullSelf || skill == SkillType.PullTarget) && CanSelectSkill(actorId, skill).CanUse
-                && TryGetOpponents(actorId, targetId, out HexCharacter actor, out HexCharacter target)
-                && IsVisibleTo(actor.Team, targetId) && TryBuildPioneerPath(actor, target, skill, line, destination);
-        }
-
-        bool ExecutePioneerSkill(int actorId, int targetId, SkillType skill,
-            IReadOnlyList<HexCoordinate> path)
-        {
-            if ((skill != SkillType.PullSelf && skill != SkillType.PullTarget) || !CanSelectSkill(actorId, skill).CanUse
-                || !TryGetOpponents(actorId, targetId, out HexCharacter actor, out HexCharacter target)
-                || !IsVisibleTo(actor.Team, targetId) || !IsValidPioneerPath(actor, target, skill, path))
-            {
-                return false;
-            }
-
-            _actingUnitId = actorId;
-            _targetUnitId = targetId;
-            _movement.Begin(path, skill == SkillType.PullSelf ? actorId : targetId,
-                skill == SkillType.PullSelf ? MovementKind.Skill : MovementKind.Forced,
-                actor.Coordinate, target.Coordinate);
-            _phase = BattleActionPhase.Moving;
-            return true;
-        }
-
-        bool CanUsePioneer(HexCharacter actor, SkillType skill)
-        {
-            return actor.Health > 0 && HasSkillResources(actor, skill);
-        }
-
-        bool TryBuildPioneerPath(HexCharacter actor, HexCharacter target, SkillType skill,
-            BattlePathLine line, List<HexCoordinate> destination)
-        {
-            destination?.Clear();
-            return (skill == SkillType.PullSelf || skill == SkillType.PullTarget)
-                && actor.Skills.IsInRange(skill, GetHexDistance(actor.Coordinate, target.Coordinate))
-                && HasSkillLineOfSight(actor, skill, actor.Coordinate, target.Coordinate)
-                && _pullPathfinder.TryFindPath(_board, actor.Coordinate, target.Coordinate, skill, line, destination);
-        }
-
-        static BattlePathLine GetPioneerCenterLine(HexCharacter actor, HexCharacter target)
-        {
-            return new BattlePathLine((long)target.Coordinate.R - actor.Coordinate.R,
-                (long)actor.Coordinate.Q - target.Coordinate.Q);
-        }
-
-        bool IsValidPioneerPath(HexCharacter actor, HexCharacter target, SkillType skill,
-            IReadOnlyList<HexCoordinate> path)
-        {
-            long distance = GetHexDistance(actor.Coordinate, target.Coordinate);
-
-            if ((skill != SkillType.PullSelf && skill != SkillType.PullTarget) || path == null
-                || !actor.Skills.IsInRange(skill, distance) || path.Count != distance - 1
-                || !HasSkillLineOfSight(actor, skill, actor.Coordinate, target.Coordinate))
-            {
-                return false;
-            }
-
-            HexCoordinate current = skill == SkillType.PullSelf ? actor.Coordinate : target.Coordinate;
-            HexCoordinate anchor = skill == SkillType.PullSelf ? target.Coordinate : actor.Coordinate;
-
-            for (int i = 0; i < path.Count; i++)
-            {
-                HexCoordinate next = path[i];
-
-                if (!_board.IsValid(next) || _board.IsOccupied(next)
-                    || GetHexDistance(current, next) != 1
-                    || GetHexDistance(next, anchor) != distance - i - 1)
-                {
-                    return false;
-                }
-
-                current = next;
-            }
-
-            return true;
-        }
-
         static long GetHexDistance(HexCoordinate from, HexCoordinate to)
         {
             long q = (long)to.Q - from.Q;
@@ -509,89 +400,25 @@ namespace RaggedBanner.Combat
             return Math.Max(Math.Abs(q), Math.Max(Math.Abs(r), Math.Abs(q + r)));
         }
 
-        bool TryBeginPioneerStep(out HexMovementStep step)
+        void StopSkillMovement()
         {
-            step = default;
-
-            if (_state != BattleState.Running || _movement.StopRequested
-                || !TryGetOpponents(_actingUnitId, _targetUnitId, out HexCharacter actor, out HexCharacter target)
-                || !_board.TryGetUnit(_movement.MoverId, out HexCharacter mover))
+            switch (_skillExecution.Definition.Type)
             {
-                StopPioneerMovement();
-                return false;
-            }
-
-            if (!HasStartedPioneerMovement)
-            {
-                if (CurrentUnitId != actor.Id || !CanUsePioneer(actor, _skillExecution.Definition.Type) || !IsVisibleTo(actor.Team, target.Id)
-                    || actor.Coordinate != _movement.ActorOrigin || target.Coordinate != _movement.TargetOrigin
-                    || !IsValidPioneerPath(actor, target, _skillExecution.Definition.Type, _movement.Path))
-                {
-                    StopPioneerMovement();
-                    return false;
-                }
-            }
-
-            HexCoordinate expectedMover = _movement.Index == 0
-                ? _skillExecution.Definition.Type == SkillType.PullSelf ? _movement.ActorOrigin : _movement.TargetOrigin
-                : _movement.Path[_movement.Index - 1];
-            HexCoordinate anchor = _skillExecution.Definition.Type == SkillType.PullSelf ? target.Coordinate : actor.Coordinate;
-            HexCoordinate expectedAnchor = _skillExecution.Definition.Type == SkillType.PullSelf
-                ? _movement.TargetOrigin : _movement.ActorOrigin;
-            HexCoordinate origin = mover.Coordinate;
-            HexCoordinate destination = _movement.Path[_movement.Index];
-            MovementKind kind = _movement.Kind;
-
-            if (origin != expectedMover || anchor != expectedAnchor
-                || EvaluateMovement(new BattleMovementRequest(mover.Id, origin, destination, kind))
-                    != BattleMovementPermission.Allowed)
-            {
-                StopPioneerMovement();
-                return false;
-            }
-
-            if (!HasStartedPioneerMovement)
-            {
-                SpendSkillCost(actor);
-                actor.SetFacing(BattleFacing.GetDirection(actor.Coordinate, target.Coordinate));
-                RefreshDetection();
-                _skillExecution.HasStartedMovement = true;
-            }
-
-            if (!_board.TryMove(mover.Id, destination))
-            {
-                StopPioneerMovement();
-                return false;
-            }
-
-            if (_skillExecution.Definition.Type == SkillType.PullSelf)
-            {
-                mover.SetFacing(BattleFacing.GetDirection(origin, destination));
-            }
-
-            if (_movement.Index == 0)
-            {
-                actor.ApplySkillMovementRecovery();
-            }
-
-            step = new HexMovementStep(mover.Id, origin, destination);
-            _movement.MarkStepIssued();
-            return true;
-        }
-
-        void StopPioneerMovement()
-        {
-            _movement.RequestStop();
-
-            if (!_movement.WaitingForCompletion)
-            {
-                FinishPioneerMovement();
+                case SkillType.AssassinLeap:
+                    StopAssassinLeap();
+                    break;
+                case SkillType.PullSelf:
+                case SkillType.PullTarget:
+                    StopPullMovement();
+                    break;
+                default:
+                    throw new InvalidOperationException();
             }
         }
 
-        void FinishPioneerMovement()
+        void FinishSkillMovement()
         {
-            if (HasStartedPioneerMovement && _board.TryGetUnit(_actingUnitId, out HexCharacter actor))
+            if (HasStartedSkillMovement && _board.TryGetUnit(_actingUnitId, out HexCharacter actor))
             {
                 Reveal(actor);
             }
@@ -627,7 +454,7 @@ namespace RaggedBanner.Combat
 
             result.Clear();
 
-            if (_phase != BattleActionPhase.Moving || IsPioneerMovement || IsAssassinLeap || _movement.Path.Count == 0)
+            if (_phase != BattleActionPhase.Moving || IsSkillMovement || _movement.Path.Count == 0)
             {
                 return false;
             }
@@ -767,14 +594,18 @@ namespace RaggedBanner.Combat
                 return false;
             }
 
-            if (IsPioneerMovement)
+            if (IsSkillMovement)
             {
-                return TryBeginPioneerStep(out step);
-            }
-
-            if (IsAssassinLeap)
-            {
-                return TryBeginAssassinLeap(out step);
+                switch (_skillExecution.Definition.Type)
+                {
+                    case SkillType.AssassinLeap:
+                        return TryBeginAssassinLeap(out step);
+                    case SkillType.PullSelf:
+                    case SkillType.PullTarget:
+                        return TryBeginPullStep(out step);
+                    default:
+                        throw new InvalidOperationException();
+                }
             }
 
             if (!_board.TryGetUnit(_actingUnitId, out HexCharacter unit) || unit.MovementRemaining <= 0)
@@ -833,23 +664,31 @@ namespace RaggedBanner.Combat
                 }
             }
 
-            if (IsAssassinLeap)
+            if (IsSkillMovement)
             {
-                CompleteAssassinLeap();
-                return true;
-            }
-
-            RefreshDetection();
-
-            if (IsPioneerMovement)
-            {
-                if (_movement.StopRequested || _movement.IsComplete)
+                switch (_skillExecution.Definition.Type)
                 {
-                    FinishPioneerMovement();
+                    case SkillType.AssassinLeap:
+                        CompleteAssassinLeap();
+                        break;
+                    case SkillType.PullSelf:
+                    case SkillType.PullTarget:
+                        RefreshDetection();
+
+                        if (_movement.StopRequested || _movement.IsComplete)
+                        {
+                            FinishSkillMovement();
+                        }
+
+                        break;
+                    default:
+                        throw new InvalidOperationException();
                 }
 
                 return true;
             }
+
+            RefreshDetection();
 
             if (_movement.IsComplete)
             {
@@ -891,7 +730,7 @@ namespace RaggedBanner.Combat
             {
                 if (IsAssassinLeap)
                 {
-                    FinishAssassinLeap();
+                    FinishSkillMovement();
                 }
                 else
                 {
@@ -903,7 +742,7 @@ namespace RaggedBanner.Combat
 
             _board.TryGetUnit(_targetUnitId, out HexCharacter target);
 
-            if (_queuedAmbush && (!CanUseAmbush(attacker) || !IsAmbushTarget(attacker, target)))
+            if (IsQueuedAmbush && (!CanUseAmbush(attacker) || !IsAmbushTarget(attacker, target)))
             {
                 CancelAction();
                 return false;
@@ -911,18 +750,18 @@ namespace RaggedBanner.Combat
 
             SpendSkillCost(attacker);
 
-            if (_queuedAmbush)
+            if (IsQueuedAmbush)
             {
                 attacker.UseAmbush();
             }
 
-            step = IssueAttack(attacker, target, BattleAttackOrigin.Command, _queuedAmbush);
+            step = IssueAttack(attacker, target, BattleAttackOrigin.Command, IsQueuedAmbush);
             return true;
         }
 
         public bool PauseMovement()
         {
-            if (IsPioneerMovement || IsAssassinLeap || _phase != BattleActionPhase.Moving || _movement.IsPaused)
+            if (IsSkillMovement || _phase != BattleActionPhase.Moving || _movement.IsPaused)
             {
                 return false;
             }
@@ -933,7 +772,7 @@ namespace RaggedBanner.Combat
 
         public bool ResumeMovement()
         {
-            if (IsPioneerMovement || IsAssassinLeap || _phase != BattleActionPhase.Moving || !_movement.IsPaused)
+            if (IsSkillMovement || _phase != BattleActionPhase.Moving || !_movement.IsPaused)
             {
                 return false;
             }
@@ -944,7 +783,7 @@ namespace RaggedBanner.Combat
 
         public void CancelAction()
         {
-            if (IsPioneerMovement && HasStartedPioneerMovement || IsAssassinLeap && HasStartedAssassinLeap)
+            if (HasStartedSkillMovement)
             {
                 return;
             }
@@ -974,7 +813,6 @@ namespace RaggedBanner.Combat
             _movementRequest = default;
             _reactions.ResetBatch();
             _stopAfterAttack = false;
-            _queuedAmbush = false;
             _phase = BattleActionPhase.None;
         }
 
@@ -1128,7 +966,7 @@ namespace RaggedBanner.Combat
 
             if (IsAssassinLeap)
             {
-                FinishAssassinLeap();
+                FinishSkillMovement();
             }
             else if (_reactions.IsActive || _turnAdvancePending || _stopAfterAttack)
             {
@@ -1166,15 +1004,9 @@ namespace RaggedBanner.Combat
 
         public void StopAction()
         {
-            if (IsAssassinLeap)
+            if (IsSkillMovement)
             {
-                StopAssassinLeap();
-                return;
-            }
-
-            if (IsPioneerMovement)
-            {
-                StopPioneerMovement();
+                StopSkillMovement();
                 return;
             }
 
@@ -1200,9 +1032,9 @@ namespace RaggedBanner.Combat
         {
             return TryGetOpponents(_actingUnitId, _targetUnitId, out HexCharacter attacker, out HexCharacter target)
                 && IsVisibleTo(attacker.Team, target.Id)
-                && attacker.Skills.IsInRange(_queuedAmbush ? SkillType.Ambush : SkillType.BasicAttack,
+                && attacker.Skills.IsInRange(IsQueuedAmbush ? SkillType.Ambush : SkillType.BasicAttack,
                     attacker.Coordinate.DistanceTo(target.Coordinate))
-                && HasSkillLineOfSight(attacker, _queuedAmbush ? SkillType.Ambush : SkillType.BasicAttack,
+                && HasSkillLineOfSight(attacker, IsQueuedAmbush ? SkillType.Ambush : SkillType.BasicAttack,
                     attacker.Coordinate, target.Coordinate);
         }
 

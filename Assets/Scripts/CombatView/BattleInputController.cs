@@ -398,13 +398,13 @@ namespace RaggedBanner.Combat.Unity
             return TryBeginActionSelection(SkillType.AssassinLeap);
         }
 
-        internal bool IsSelectingPioneerSkill(SkillType skill)
+        internal bool IsSelectingPullSkill(SkillType skill)
         {
             return IsSelectingAction && (skill == SkillType.PullSelf || skill == SkillType.PullTarget)
                 && _selection == skill;
         }
 
-        internal bool TryBeginPioneerSelection(SkillType skill)
+        internal bool TryBeginPullSelection(SkillType skill)
         {
             if (skill != SkillType.PullSelf && skill != SkillType.PullTarget)
             {
@@ -717,9 +717,9 @@ namespace RaggedBanner.Combat.Unity
             return simulation.Board.TryGetUnit(_selectionUnitId, out unit);
         }
 
-        internal bool TryUpdatePioneerTarget(Vector2 position)
+        internal bool TryUpdatePullTarget(Vector2 position)
         {
-            return (IsSelectingPioneerSkill(SkillType.PullSelf) || IsSelectingPioneerSkill(SkillType.PullTarget))
+            return (IsSelectingPullSkill(SkillType.PullSelf) || IsSelectingPullSkill(SkillType.PullTarget))
                 && TryUpdateSelectedPosition(position);
         }
 
@@ -762,11 +762,11 @@ namespace RaggedBanner.Combat.Unity
             return line.IsValid;
         }
 
-        internal bool TryGetPioneerPath(BattleRunner runner, int unitId, int targetId, SkillType skill,
+        internal bool TryGetPullPath(BattleRunner runner, int unitId, int targetId, SkillType skill,
             out IReadOnlyList<HexCoordinate> path)
         {
             path = null;
-            if (!IsSelectingPioneerSkill(skill) || !TryGetSkillCommand(runner, out _, out SkillUseRequest request)
+            if (!IsSelectingPullSkill(skill) || !TryGetSkillCommand(runner, out _, out SkillUseRequest request)
                 || request.UnitId != unitId || request.TargetId != targetId || request.Path == null)
             {
                 return false;
@@ -776,7 +776,7 @@ namespace RaggedBanner.Combat.Unity
             return true;
         }
 
-        internal bool TryGetPioneerContext(BattleRunner runner, out BattleSimulation simulation,
+        internal bool TryGetPullContext(BattleRunner runner, out BattleSimulation simulation,
             out HexCharacter unit, out SkillType skill, out int targetId)
         {
             simulation = null;

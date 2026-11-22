@@ -50,8 +50,8 @@ namespace RaggedBanner.Combat
                 case SkillType.PullSelf:
                 case SkillType.PullTarget:
                     bool found = query.Line.HasValue
-                        ? TryCopyPioneerPath(actor.Id, query.TargetId, query.Skill, query.Line.Value, path)
-                        : TryCopyPioneerPath(actor.Id, query.TargetId, query.Skill, path);
+                        ? TryCopyPullPath(actor.Id, query.TargetId, query.Skill, query.Line.Value, path)
+                        : TryCopyPullPath(actor.Id, query.TargetId, query.Skill, path);
                     if (!found)
                     {
                         path.Clear();

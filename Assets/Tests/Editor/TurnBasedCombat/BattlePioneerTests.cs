@@ -17,7 +17,7 @@ namespace RaggedBanner.Combat.Tests
         [TestCase(SkillType.SpiritImbuement)]
         [TestCase((SkillType)(-1))]
         [TestCase((SkillType)99)]
-        public void PioneerEntryPointsRejectOtherSkillTypesWithoutChangingState(SkillType skill)
+        public void PullEntryPointsRejectOtherSkillTypesWithoutChangingState(SkillType skill)
         {
             BattleSimulation battle = NewBattle();
             HexCharacter actor = Spawn(battle, BattleTeam.Player, new HexCoordinate(2, 5), true);
@@ -27,14 +27,14 @@ namespace RaggedBanner.Combat.Tests
             BattlePathLine line = new BattlePathLine((long)target.Coordinate.R - actor.Coordinate.R,
                 (long)actor.Coordinate.Q - target.Coordinate.Q);
             List<HexCoordinate> path = new List<HexCoordinate> { new HexCoordinate(3, 5) };
-            Assert.That(battle.CanUsePioneerSkill(actor.Id, target.Id, skill), Is.False);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, skill), Is.False);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, skill, line), Is.False);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, skill, path), Is.False);
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, skill, path), Is.False);
+            Assert.That(battle.CanUsePullSkill(actor.Id, target.Id, skill), Is.False);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, skill), Is.False);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, skill, line), Is.False);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, skill, path), Is.False);
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, skill, path), Is.False);
             Assert.That(path, Is.Empty);
             path.Add(new HexCoordinate(3, 5));
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, skill, line, path), Is.False);
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, skill, line, path), Is.False);
             Assert.That(path, Is.Empty);
             Assert.That(actor.ActionPoints, Is.EqualTo(8));
             Assert.That(actor.MovementRemaining, Is.EqualTo(2));
@@ -65,9 +65,9 @@ namespace RaggedBanner.Combat.Tests
             HexCharacter target = Spawn(battle, BattleTeam.Enemy, targetPosition);
             BattleTestUtility.StartTurn(battle, actor.Id);
             List<HexCoordinate> path = new List<HexCoordinate>();
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, skill, path), Is.True);
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, skill, path), Is.True);
             Assert.That(path.Count, Is.EqualTo(3));
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, skill), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, skill), Is.True);
             Assert.That(actor.ActionPoints, Is.EqualTo(8));
             Assert.That(battle.ActingUnitId, Is.EqualTo(actor.Id));
             Assert.That(battle.MovingUnitId, Is.EqualTo(skill == SkillType.PullSelf ? actor.Id : target.Id));
@@ -104,8 +104,8 @@ namespace RaggedBanner.Combat.Tests
             HexCharacter actor = Spawn(battle, BattleTeam.Player, new HexCoordinate(2, 5), true);
             HexCharacter target = Spawn(battle, BattleTeam.Enemy, new HexCoordinate(q, r));
             BattleTestUtility.StartTurn(battle, actor.Id);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullSelf), Is.False);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullTarget), Is.False);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullSelf), Is.False);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullTarget), Is.False);
             Assert.That(actor.ActionPoints, Is.EqualTo(8));
             Assert.That(actor.HasUsedSkillMovementRecovery, Is.False);
             Assert.That(battle.IsBusy, Is.False);
@@ -130,13 +130,13 @@ namespace RaggedBanner.Combat.Tests
             BattleTestUtility.StartTurn(battle, actor.Id);
             List<HexCoordinate> forward = new List<HexCoordinate>();
             List<HexCoordinate> backward = new List<HexCoordinate>();
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, SkillType.PullSelf, forward), Is.True);
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, SkillType.PullTarget, backward), Is.True);
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, SkillType.PullSelf, forward), Is.True);
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, SkillType.PullTarget, backward), Is.True);
             Assert.That(forward.Count, Is.EqualTo(distance - 1));
             backward.Reverse();
             Assert.That(backward, Is.EqualTo(forward));
             List<HexCoordinate> repeated = new List<HexCoordinate>();
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, SkillType.PullSelf, repeated), Is.True);
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, SkillType.PullSelf, repeated), Is.True);
             Assert.That(repeated, Is.EqualTo(forward));
 
             if (skill == SkillType.PullTarget)
@@ -144,7 +144,7 @@ namespace RaggedBanner.Combat.Tests
                 forward.Reverse();
             }
 
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, skill), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, skill), Is.True);
             HexCharacter mover = skill == SkillType.PullSelf ? actor : target;
             HexCoordinate anchor = skill == SkillType.PullSelf ? target.Coordinate : actor.Coordinate;
 
@@ -174,12 +174,12 @@ namespace RaggedBanner.Combat.Tests
             Spawn(battle, BattleTeam.Enemy, new HexCoordinate(3, 6));
             BattleTestUtility.StartTurn(battle, actor.Id);
             List<HexCoordinate> path = new List<HexCoordinate>();
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, SkillType.PullSelf, path), Is.True);
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, SkillType.PullSelf, path), Is.True);
             Assert.That(path, Is.EqualTo(new[]
             {
                 new HexCoordinate(2, 6), new HexCoordinate(2, 7), new HexCoordinate(3, 7)
             }));
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullSelf), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullSelf), Is.True);
             FinishSkill(battle);
             Assert.That(actor.Coordinate, Is.EqualTo(new HexCoordinate(3, 7)));
         }
@@ -197,9 +197,9 @@ namespace RaggedBanner.Combat.Tests
             Assert.That(new HexPathfinder().TryFindPathToAttackPosition(battle.Board, actor.Coordinate,
                 target.Coordinate, 1, detour), Is.True);
             Assert.That(detour.Count, Is.GreaterThan(3));
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, SkillType.PullSelf, detour), Is.False);
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, SkillType.PullSelf, detour), Is.False);
             Assert.That(detour, Is.Empty);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullTarget), Is.False);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullTarget), Is.False);
             Assert.That(actor.ActionPoints, Is.EqualTo(8));
         }
 
@@ -214,8 +214,8 @@ namespace RaggedBanner.Combat.Tests
                 skill == SkillType.PullSelf ? new HexCoordinate(5, 5) : new HexCoordinate(4, 4));
             BattleTestUtility.StartTurn(battle, actor.Id);
             List<HexCoordinate> original = new List<HexCoordinate>();
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, skill, original), Is.True);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, skill), Is.True);
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, skill, original), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, skill), Is.True);
             MoveExternally(battle, blocker.Id, original[original.Count - 1]);
             Assert.That(battle.TryBeginMovementStep(out _), Is.False);
             Assert.That(actor.Coordinate, Is.EqualTo(new HexCoordinate(2, 5)));
@@ -224,7 +224,7 @@ namespace RaggedBanner.Combat.Tests
             Assert.That(actor.HasUsedSkillMovementRecovery, Is.False);
             Assert.That(battle.TrySettleAction(), Is.True);
             List<HexCoordinate> alternative = new List<HexCoordinate>();
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, skill, alternative), Is.True);
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, skill, alternative), Is.True);
             Assert.That(alternative, Is.Not.EqualTo(original));
         }
 
@@ -238,9 +238,9 @@ namespace RaggedBanner.Combat.Tests
             BattleTestUtility.StartTurn(battle, actor.Id);
             List<HexCoordinate> horizontal = new List<HexCoordinate>();
             List<HexCoordinate> vertical = new List<HexCoordinate>();
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, skill,
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, skill,
                 new BattlePathLine(0d, 1d), horizontal), Is.True);
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, skill,
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, skill,
                 new BattlePathLine(1d, 0d), vertical), Is.True);
             List<HexCoordinate> expectedHorizontal = new List<HexCoordinate>
             {
@@ -259,10 +259,10 @@ namespace RaggedBanner.Combat.Tests
 
             Assert.That(horizontal, Is.EqualTo(expectedHorizontal));
             Assert.That(vertical, Is.EqualTo(expectedVertical));
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, skill, horizontal), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, skill, horizontal), Is.True);
             horizontal.Clear();
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, skill, vertical), Is.False);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, skill, new BattlePathLine(1d, 0d)), Is.False);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, skill, vertical), Is.False);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, skill, new BattlePathLine(1d, 0d)), Is.False);
 
             for (int i = 0; i < expectedHorizontal.Count; i++)
             {
@@ -286,15 +286,15 @@ namespace RaggedBanner.Combat.Tests
             HexCharacter target = Spawn(battle, BattleTeam.Enemy, targetPosition);
             BattleTestUtility.StartTurn(battle, actor.Id);
             List<HexCoordinate> path = new List<HexCoordinate>();
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, skill,
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, skill,
                 new BattlePathLine(0d, 1d), path), Is.True);
             List<HexCoordinate> expected = new List<HexCoordinate>(path);
             uint occupancyVersion = battle.Board.OccupancyVersion;
 
-            Assert.That(battle.CanUsePioneerSkill(actor.Id, target.Id, skill), Is.True);
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, skill,
+            Assert.That(battle.CanUsePullSkill(actor.Id, target.Id, skill), Is.True);
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, skill,
                 new BattlePathLine(0d, 0d), null), Is.False);
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, skill,
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, skill,
                 new BattlePathLine(1d, 0d), null), Is.True);
             Assert.That(path, Is.EqualTo(expected));
             Assert.That(battle.Board.OccupancyVersion, Is.EqualTo(occupancyVersion));
@@ -304,7 +304,7 @@ namespace RaggedBanner.Combat.Tests
             Assert.That(actor.MovementRemaining, Is.EqualTo(2));
             Assert.That(battle.IsBusy, Is.False);
 
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, skill,
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, skill,
                 new BattlePathLine(0d, 1d), path), Is.True);
             Assert.That(path, Is.EqualTo(expected));
         }
@@ -330,12 +330,12 @@ namespace RaggedBanner.Combat.Tests
                 expected.Reverse();
             }
 
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, skill, line, path), Is.True);
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, skill, line, path), Is.True);
             Assert.That(path, Is.EqualTo(expected));
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, skill,
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, skill,
                 new BattlePathLine(-double.MaxValue, double.MaxValue), path), Is.True);
             Assert.That(path, Is.EqualTo(expected));
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, skill, line), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, skill, line), Is.True);
 
             for (int i = 0; i < expected.Count; i++)
             {
@@ -357,9 +357,9 @@ namespace RaggedBanner.Combat.Tests
             BattlePathLine line = new BattlePathLine(qWeight, rWeight);
             List<HexCoordinate> path = new List<HexCoordinate> { actor.Coordinate };
             Assert.That(line.IsValid, Is.False);
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, SkillType.PullSelf, line, path), Is.False);
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, SkillType.PullSelf, line, path), Is.False);
             Assert.That(path, Is.Empty);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullSelf, line), Is.False);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullSelf, line), Is.False);
             Assert.That(actor.ActionPoints, Is.EqualTo(8));
             Assert.That(battle.IsBusy, Is.False);
         }
@@ -374,10 +374,10 @@ namespace RaggedBanner.Combat.Tests
             {
                 new HexCoordinate(4, 5), new HexCoordinate(3, 5), new HexCoordinate(5, 5)
             };
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullSelf, path), Is.False);
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, SkillType.PullSelf, path), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullSelf, path), Is.False);
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, SkillType.PullSelf, path), Is.True);
             MoveExternally(battle, blocker.Id, path[path.Count - 1]);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullSelf, path), Is.False);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullSelf, path), Is.False);
             Assert.That(actor.ActionPoints, Is.EqualTo(8));
             Assert.That(actor.HasUsedSkillMovementRecovery, Is.False);
             Assert.That(battle.IsBusy, Is.False);
@@ -390,9 +390,9 @@ namespace RaggedBanner.Combat.Tests
             Spawn(battle, BattleTeam.Enemy, new HexCoordinate(4, 5));
             BattleTestUtility.StartTurn(battle, actor.Id);
             List<HexCoordinate> path = new List<HexCoordinate>();
-            Assert.That(battle.TryCopyPioneerPath(actor.Id, target.Id, SkillType.PullSelf, path), Is.False);
+            Assert.That(battle.TryCopyPullPath(actor.Id, target.Id, SkillType.PullSelf, path), Is.False);
             Assert.That(path, Is.Empty);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullTarget), Is.False);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullTarget), Is.False);
             Assert.That(actor.ActionPoints, Is.EqualTo(8));
             Assert.That(actor.Coordinate, Is.EqualTo(new HexCoordinate(2, 5)));
         }
@@ -403,7 +403,7 @@ namespace RaggedBanner.Combat.Tests
             BattleSimulation battle = CreateBattle(out HexCharacter actor, out HexCharacter target);
             HexCharacter blocker = Spawn(battle, BattleTeam.Enemy, new HexCoordinate(4, 6));
             BattleTestUtility.StartTurn(battle, actor.Id);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullSelf), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullSelf), Is.True);
             MoveExternally(battle, blocker.Id, new HexCoordinate(4, 5));
             Assert.That(battle.TryBeginMovementStep(out _), Is.False);
             Assert.That(actor.ActionPoints, Is.EqualTo(8));
@@ -417,7 +417,7 @@ namespace RaggedBanner.Combat.Tests
             BattleSimulation battle = CreateBattle(out HexCharacter actor, out HexCharacter target);
             HexCharacter blocker = Spawn(battle, BattleTeam.Enemy, new HexCoordinate(4, 6));
             BattleTestUtility.StartTurn(battle, actor.Id);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullSelf), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullSelf), Is.True);
             Assert.That(battle.TryBeginMovementStep(out _), Is.True);
             Assert.That(battle.TryCompleteMovementStep(), Is.True);
             MoveExternally(battle, blocker.Id, new HexCoordinate(4, 5));
@@ -435,14 +435,14 @@ namespace RaggedBanner.Combat.Tests
             BattleTestUtility.StartTurn(battle, actor.Id);
             Invoke(actor, "SpendMovement", 2);
             Assert.That(actor.MovementRemaining, Is.Zero);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
             Assert.That(battle.TryBeginMovementStep(out _), Is.True);
             Assert.That(actor.MovementRemaining, Is.EqualTo(1));
             battle.StopAction();
             Assert.That(battle.TryCompleteMovementStep(), Is.True);
             Assert.That(battle.TrySettleAction(), Is.True);
             Invoke(actor, "SpendMovement", 1);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
             FinishSkill(battle);
             Assert.That(actor.MovementRemaining, Is.Zero);
             Assert.That(actor.ActionPoints, Is.EqualTo(4));
@@ -460,7 +460,7 @@ namespace RaggedBanner.Combat.Tests
             HexCharacter target = Spawn(battle, BattleTeam.Enemy, new HexCoordinate(6, 5));
             BattleTestUtility.StartTurn(battle, actor.Id);
             Invoke(actor, "SpendMovement", 2);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullSelf), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullSelf), Is.True);
             FinishSkill(battle);
             Assert.That(actor.MovementRemaining, Is.Zero);
             Assert.That(actor.HasUsedSkillMovementRecovery, Is.False);
@@ -476,7 +476,7 @@ namespace RaggedBanner.Combat.Tests
             Assert.That(battle.TryEndTurn(target.Id), Is.True);
             Assert.That(actor.TurnMovementAllowance, Is.EqualTo(1));
             Invoke(actor, "SpendMovement", 1);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
             FinishSkill(battle);
             Assert.That(actor.IsStealthed, Is.False);
             Assert.That(actor.MovementRemaining, Is.EqualTo(1));
@@ -488,7 +488,7 @@ namespace RaggedBanner.Combat.Tests
         {
             BattleSimulation battle = CreateBattle(out HexCharacter actor, out HexCharacter target);
             BattleTestUtility.StartTurn(battle, actor.Id);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
             Assert.That(battle.TryBeginMovementStep(out _), Is.True);
             battle.CancelAction();
             Assert.That(battle.IsWaitingForMovementCompletion, Is.True);
@@ -510,7 +510,7 @@ namespace RaggedBanner.Combat.Tests
             BattleSimulation battle = CreateBattle(out HexCharacter actor, out HexCharacter target);
             BattleTestUtility.StartTurn(battle, actor.Id);
             Assert.That(battle.TryEnterStealth(actor.Id), Is.True);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
             battle.CancelAction();
             Assert.That(actor.ActionPoints, Is.EqualTo(6));
             Assert.That(actor.IsStealthed, Is.True);
@@ -523,8 +523,8 @@ namespace RaggedBanner.Combat.Tests
         {
             BattleSimulation battle = CreateBattle(out HexCharacter actor, out HexCharacter target);
             BattleTestUtility.StartTurn(battle, actor.Id);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullSelf), Is.False);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullSelf), Is.False);
             FinishSkill(battle);
             Assert.That(target.Coordinate, Is.EqualTo(new HexCoordinate(3, 5)));
         }
@@ -537,7 +537,7 @@ namespace RaggedBanner.Combat.Tests
             HexCharacter ally = Spawn(battle, BattleTeam.Player, new HexCoordinate(0, 0));
             Spawn(battle, BattleTeam.Enemy, new HexCoordinate(10, 10));
             BattleTestUtility.StartTurn(battle, actor.Id);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
             Assert.That(battle.TryBeginMovementStep(out _), Is.True);
             Assert.That(battle.RemoveUnit(removeActor ? actor.Id : target.Id), Is.True);
             Assert.That(battle.IsWaitingForMovementCompletion, Is.True);
@@ -557,7 +557,7 @@ namespace RaggedBanner.Combat.Tests
                 skill == SkillType.PullSelf ? new HexCoordinate(1, 5) : new HexCoordinate(7, 5),
                 opportunity: true);
             BattleTestUtility.StartTurn(battle, actor.Id);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, skill), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, skill), Is.True);
             Assert.That(battle.TryBeginMovementStep(out _), Is.True);
             Assert.That(battle.HasPendingReactions, Is.False);
             Assert.That(battle.TryCompleteMovementStep(), Is.True);
@@ -574,8 +574,8 @@ namespace RaggedBanner.Combat.Tests
                 new BattleTestUnit(MercenaryClass.Rogue, 20, 3, 2, 1, 0), HexDirection.East,
                 out _, specialization: MercenarySpecialization.Pioneer), Is.False);
             BattleTestUtility.StartTurn(battle, actor.Id);
-            Assert.That(battle.CanSelectPioneerSkill(actor.Id), Is.False);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullSelf), Is.False);
+            Assert.That(battle.CanSelectPullSkill(actor.Id), Is.False);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullSelf), Is.False);
         }
 
         [Test]
@@ -587,7 +587,7 @@ namespace RaggedBanner.Combat.Tests
             Assert.That(battle.TryEnterStealth(hidden.Id), Is.True);
             Assert.That(battle.TryEndTurn(hidden.Id), Is.True);
             BattleTestUtility.AdvanceToTurn(battle, actor.Id);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
             Assert.That(battle.TryBeginMovementStep(out _), Is.True);
             Assert.That(hidden.IsStealthed, Is.True);
             Assert.That(target.Facing, Is.EqualTo(HexDirection.East));
@@ -606,7 +606,7 @@ namespace RaggedBanner.Combat.Tests
             BattleTestUtility.StartTurn(battle, archer.Id);
             Assert.That(battle.TryPrepareOverwatch(archer.Id, HexDirection.East), Is.True);
             Assert.That(battle.CurrentUnitId, Is.EqualTo(actor.Id));
-            Assert.That(battle.TryPioneerSkill(actor.Id, archer.Id, SkillType.PullTarget), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, archer.Id, SkillType.PullTarget), Is.True);
             Assert.That(battle.TryBeginMovementStep(out _), Is.True);
             Assert.That(battle.HasPendingReactions, Is.False);
             Assert.That(archer.IsOverwatching, Is.False);
@@ -624,12 +624,12 @@ namespace RaggedBanner.Combat.Tests
             BattleSimulation battle = CreateBattle(out HexCharacter actor, out HexCharacter target);
             BattleTestUtility.StartTurn(battle, actor.Id);
             Assert.That(battle.TryEnterStealth(actor.Id), Is.True);
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
             battle.StopAction();
             Assert.That(battle.TrySettleAction(), Is.True);
             Assert.That(actor.IsStealthed, Is.True);
             Assert.That(actor.ActionPoints, Is.EqualTo(6));
-            Assert.That(battle.TryPioneerSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
+            Assert.That(battle.TryPullSkill(actor.Id, target.Id, SkillType.PullTarget), Is.True);
             Assert.That(battle.TryBeginMovementStep(out _), Is.True);
             Assert.That(actor.IsStealthed, Is.True);
             battle.StopAction();
