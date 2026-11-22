@@ -80,8 +80,8 @@ FOV를 낮추면 같은 화면 크기를 유지하도록 카메라를 뒤로 빼
 | 효과 | 값 |
 | --- | --- |
 | Tonemapping | Neutral |
-| White Balance | Temperature +8 |
-| Color Adjustments | Post Exposure 0.3, Contrast 8, Saturation 10 |
+| White Balance | Temperature +4 |
+| Color Adjustments | Post Exposure 0.3, Contrast 8 (Saturation 사용 안 함) |
 | Shadows/Midtones/Highlights | Shadows (0.92, 0.92, 1.0), Midtones (1.0, 0.98, 0.94) |
 | Vignette | 강도 0.195, 부드러움 0.366 |
 
