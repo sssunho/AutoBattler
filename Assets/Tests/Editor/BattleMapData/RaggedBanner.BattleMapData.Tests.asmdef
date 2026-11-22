@@ -1,0 +1,26 @@
+{
+  "name": "RaggedBanner.BattleMapData.Tests",
+  "rootNamespace": "RaggedBanner.BattleMaps.Tests",
+  "references": [
+    "RaggedBanner.BattleMapData",
+    "RaggedBanner.Combat",
+    "RaggedBanner.HexGrid",
+    "RaggedBanner.Mercenaries"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

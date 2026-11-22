@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using AutoBattler.HexGrid;
+using RaggedBanner.HexGrid;
 using NUnit.Framework;
 
 namespace RaggedBanner.Combat.Tests
@@ -56,6 +56,28 @@ namespace RaggedBanner.Combat.Tests
             Assert.That(path, Is.Empty);
             Assert.That(pathfinder.TryFindPath(new BattleBoard(1, 1), default, default, path), Is.True);
             Assert.That(path, Is.Empty);
+        }
+
+        [TestCase(1, 4)]
+        [TestCase(3, 6)]
+        public void EqualDistanceAttackPositionsKeepEastBeforeNorthEast(int attackRange, int targetQ)
+        {
+            HexPathfinder pathfinder = new HexPathfinder();
+            List<HexCoordinate> path = new List<HexCoordinate>();
+            BattleBoard board = new BattleBoard(8, 4);
+            HexCoordinate start = new HexCoordinate(2, 2);
+            HexCoordinate target = new HexCoordinate(targetQ, 1);
+            HexCoordinate east = start.GetNeighbor(HexDirection.East);
+            HexCoordinate northEast = start.GetNeighbor(HexDirection.NorthEast);
+            Assert.That(start.DistanceTo(target), Is.EqualTo(attackRange + 1));
+            Assert.That(east.DistanceTo(target), Is.EqualTo(attackRange));
+            Assert.That(northEast.DistanceTo(target), Is.EqualTo(attackRange));
+
+            for (int i = 0; i < 3; i++)
+            {
+                Assert.That(pathfinder.TryFindPathToAttackPosition(board, start, target, attackRange, path), Is.True);
+                Assert.That(path, Is.EqualTo(new[] { east }));
+            }
         }
 
         [Test]

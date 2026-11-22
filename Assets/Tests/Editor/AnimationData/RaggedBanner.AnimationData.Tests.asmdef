@@ -1,0 +1,23 @@
+{
+  "name": "RaggedBanner.AnimationData.Tests",
+  "rootNamespace": "RaggedBanner.Animations.Tests",
+  "references": [
+    "RaggedBanner.AnimationData"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

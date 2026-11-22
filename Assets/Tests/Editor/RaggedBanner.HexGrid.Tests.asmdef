@@ -1,9 +1,9 @@
 {
-    "name": "AutoBattler.HexGrid.Tests",
-    "rootNamespace": "AutoBattler.HexGrid.Tests",
+    "name": "RaggedBanner.HexGrid.Tests",
+    "rootNamespace": "RaggedBanner.HexGrid.Tests",
     "references": [
-        "AutoBattler.HexGrid",
-        "AutoBattler.HexGridView"
+        "RaggedBanner.HexGrid",
+        "RaggedBanner.HexGridView"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"

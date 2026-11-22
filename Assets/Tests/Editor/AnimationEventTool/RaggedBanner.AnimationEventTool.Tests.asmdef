@@ -1,0 +1,25 @@
+{
+  "name": "RaggedBanner.AnimationEventTool.Tests",
+  "rootNamespace": "RaggedBanner.AnimationTools.Tests",
+  "references": [
+    "RaggedBanner.AnimationData",
+    "RaggedBanner.AnimationEventTool",
+    "RaggedBanner.CombatView"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

@@ -1,5 +1,5 @@
 using System;
-using AutoBattler.HexGrid;
+using RaggedBanner.HexGrid;
 using NUnit.Framework;
 
 namespace AutoBattler.Combat.Tests

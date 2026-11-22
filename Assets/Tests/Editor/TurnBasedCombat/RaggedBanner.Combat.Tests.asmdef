@@ -2,8 +2,17 @@
   "name": "RaggedBanner.Combat.Tests",
   "rootNamespace": "RaggedBanner.Combat.Tests",
   "references": [
+    "RaggedBanner.AnimationData",
+    "RaggedBanner.AnimationPlayback",
+    "RaggedBanner.Mercenaries",
+    "RaggedBanner.MercenaryData",
+    "RaggedBanner.BattleMapData",
     "RaggedBanner.Combat",
-    "AutoBattler.HexGrid"
+    "RaggedBanner.HexGrid",
+    "RaggedBanner.HexGridView",
+    "RaggedBanner.CombatView",
+    "RaggedBanner.Combat.Tests.RuntimeSupport",
+    "UnityEngine.UI"
   ],
   "includePlatforms": [
     "Editor"

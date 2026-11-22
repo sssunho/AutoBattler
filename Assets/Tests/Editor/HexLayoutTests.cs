@@ -1,9 +1,9 @@
 using System;
 using NUnit.Framework;
 using UnityEngine;
-using AutoBattler.HexGrid.Unity;
+using RaggedBanner.HexGrid.Unity;
 
-namespace AutoBattler.HexGrid.Tests
+namespace RaggedBanner.HexGrid.Tests
 {
     public sealed class HexLayoutTests
     {

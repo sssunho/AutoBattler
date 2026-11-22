@@ -1,0 +1,24 @@
+{
+  "name": "RaggedBanner.WorldMap.Tests",
+  "rootNamespace": "RaggedBanner.WorldMap.Tests",
+  "references": [
+    "RaggedBanner.GameState",
+    "RaggedBanner.WorldMap"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

@@ -3,7 +3,7 @@
     "rootNamespace": "AutoBattler.Combat.Tests",
     "references": [
         "AutoBattler.Combat",
-        "AutoBattler.HexGrid"
+        "RaggedBanner.HexGrid"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"

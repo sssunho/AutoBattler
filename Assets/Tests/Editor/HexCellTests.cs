@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace AutoBattler.HexGrid.Tests
+namespace RaggedBanner.HexGrid.Tests
 {
     public sealed class HexCellTests
     {
