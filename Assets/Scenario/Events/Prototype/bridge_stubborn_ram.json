@@ -1,0 +1,71 @@
+{
+  "id": "bridge_stubborn_ram",
+  "title": "물속의 경쟁자",
+  "description": "목장 앞의 돌다리가 양 떼로 막혀 있다. 맨 앞의 숫양은 다리 가장자리에서 강물을 노려보고, 뒤의 양들은 무슨 일인지도 모르면서 차례를 기다린다.\n\n소년 하나가 숫양의 엉덩이를 밀다가 우리를 보고 손을 놓는다.\n\n“물속에 다른 숫양이 있다고 생각하나 봐요. 저 녀석이 먼저 비켜야 간대요.”\n\n숫양이 고개를 낮추자 물속의 숫양도 고개를 낮춘다. 소년의 어깨에는 넓은 천이 걸려 있다. 강물은 잔잔하고, 이 대치는 쉽게 끝날 것 같지 않다.",
+  "arcId": null,
+  "goalId": null,
+  "eventType": "Normal",
+  "arcStage": null,
+  "conditions": {
+    "requiredTags": [],
+    "forbiddenTags": [],
+    "fameMin": null,
+    "fameMax": null,
+    "reputationMin": null,
+    "reputationMax": null,
+    "moneyMin": null,
+    "moneyMax": null,
+    "resolvedEventCountMin": null,
+    "resolvedEventCountMax": null,
+    "locations": [5]
+  },
+  "resolution": {
+    "type": "Choice",
+    "choices": [
+      {
+        "id": "hide_reflection",
+        "text": "천으로 물이 보이지 않게 가려보자.",
+        "conditions": {
+          "requiredTags": [],
+          "forbiddenTags": [],
+          "moneyMin": null
+        },
+        "result": {
+          "text": "우리는 소년의 천을 펴서 숫양과 강물 사이를 가린다. 상대가 사라지자 숫양은 잠깐 콧김을 뿜더니 의기양양하게 다리를 건넌다.\n\n이번에는 뒤따르던 양들이 천을 울타리로 여겨 멈춰 선다. 우리가 천을 내리자 건너편의 숫양이 재촉하듯 울고, 양 떼가 하나씩 다리를 지난다.\n\n소년은 천을 도로 어깨에 걸치고 고개를 꾸벅 숙인다. 이제 다리는 우리 차례다.",
+          "battle": false,
+          "effects": {
+            "addTags": [],
+            "removeTags": [],
+            "fameChange": 0,
+            "reputationChange": 0,
+            "moneyChange": 0,
+            "revealGoalIds": [],
+            "arcTransition": null
+          }
+        }
+      },
+      {
+        "id": "drive_ram",
+        "text": "우리도 소리를 질러서 몰아보자.",
+        "conditions": {
+          "requiredTags": [],
+          "forbiddenTags": [],
+          "moneyMin": null
+        },
+        "result": {
+          "text": "우리는 숫양을 둘러싸고 소리를 지른다. 숫양은 물속의 적보다 시끄러운 쪽을 상대하기로 했는지, 앞발로 돌바닥을 긁더니 우리 쪽으로 달려든다.\n\n모두가 동시에 옆으로 뛰어 피한다. 기세를 멈추지 못한 숫양은 그대로 다리를 건너고, 양 떼도 그 뒤를 우르르 따른다.\n\n소년이 건너편을 보며 묻는다. “다음에도 이 방법으로 해야 할까요?”\n\n우리는 서로의 옷에 묻은 먼지를 털어준다. 대답은 아무도 하지 않는다.",
+          "battle": false,
+          "effects": {
+            "addTags": [],
+            "removeTags": [],
+            "fameChange": 0,
+            "reputationChange": 0,
+            "moneyChange": 0,
+            "revealGoalIds": [],
+            "arcTransition": null
+          }
+        }
+      }
+    ]
+  }
+}

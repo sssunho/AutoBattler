@@ -1,0 +1,38 @@
+{
+  "id": "fork_two_roads",
+  "title": "길값과 돌아가는 길",
+  "description": "낡은 이정표 아래에서 길이 둘로 갈라진다. 왼쪽 길은 돌가루가 날리는 폐채석장 사이로 곧게 뻗어 있고, 오른쪽 길은 강을 따라 목장 쪽으로 휘어진다.\n\n채석장 방향의 표지에는 누군가 칼끝으로 글자를 새겨놓았다.\n\n‘길값 받음. 일꾼 아님.’\n\n그 아래에는 다른 필체로 ‘그걸 왜 우리가 내냐’고 적혀 있다. 강 쪽에서는 양 울음소리가 들린다. 양쪽 표지 모두 끝에는 ‘옛 측량소’라고 적혀 있다.",
+  "arcId": null,
+  "goalId": null,
+  "eventType": "Normal",
+  "arcStage": null,
+  "conditions": {
+    "requiredTags": [],
+    "forbiddenTags": [],
+    "fameMin": null,
+    "fameMax": null,
+    "reputationMin": null,
+    "reputationMax": null,
+    "moneyMin": null,
+    "moneyMax": null,
+    "resolvedEventCountMin": null,
+    "resolvedEventCountMax": null,
+    "locations": [3]
+  },
+  "resolution": {
+    "type": "Automatic",
+    "result": {
+      "text": "채석장길은 골짜기로 향하는 지름길이지만, 길을 막고 돈을 받는 자들을 만나게 될 듯하다. 강변 목장길은 더 돌아가므로 이동 시간이 더 든다.\n\n두 길은 버려진 측량소에서 다시 만난다. 우리는 표지에 적힌 내용을 확인하고 어느 쪽으로 갈지 길을 살핀다.",
+      "battle": false,
+      "effects": {
+        "addTags": [],
+        "removeTags": [],
+        "fameChange": 0,
+        "reputationChange": 0,
+        "moneyChange": 0,
+        "revealGoalIds": [],
+        "arcTransition": null
+      }
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "id": "survey_wrong_scale",
+  "title": "맞지 않는 축척",
+  "description": "비탈 위의 측량소는 지붕 절반이 내려앉았다. 책상에는 골짜기 절벽을 그린 도면이 펼쳐져 있다. 동굴처럼 보이는 구멍들이 같은 간격으로 줄지어 있고, 옆에는 몇 번이나 고쳐 쓴 치수가 남아 있다.\n\n문밖에는 방패만 한 휘어진 유리 조각이 놓여 있다. 조각의 가장자리를 따라 붉은 액체가 말라붙어 있다. 멀리 보이는 절벽에도 도면과 똑같은 수평선이 보인다.",
+  "arcId": null,
+  "goalId": null,
+  "eventType": "Normal",
+  "arcStage": null,
+  "conditions": {
+    "requiredTags": [],
+    "forbiddenTags": [],
+    "fameMin": null,
+    "fameMax": null,
+    "reputationMin": null,
+    "reputationMax": null,
+    "moneyMin": null,
+    "moneyMax": null,
+    "resolvedEventCountMin": null,
+    "resolvedEventCountMax": null,
+    "locations": [6]
+  },
+  "resolution": {
+    "type": "Choice",
+    "choices": [
+      {
+        "id": "compare_plan",
+        "text": "도면을 실제 절벽과 맞춰 본다.",
+        "conditions": {
+          "requiredTags": [],
+          "forbiddenTags": [],
+          "moneyMin": null
+        },
+        "result": {
+          "text": "구멍 사이의 간격뿐 아니라 깊이도 일정하다. 수평선은 바위의 결이 아니라 판과 판이 맞물리는 이음매다. 거대한 구조물의 앞면이 절벽처럼 서 있는 것이다. 도면의 옆모습을 따라가자 아래쪽 받침턱이 안쪽까지 이어진다. 저 턱을 밟으면 정면을 피해 내부로 접근할 수 있겠다.",
+          "battle": false,
+          "effects": {
+            "addTags": ["KnowsCliffStructure"],
+            "removeTags": [],
+            "fameChange": 0,
+            "reputationChange": 0,
+            "moneyChange": 0,
+            "revealGoalIds": [],
+            "arcTransition": null
+          }
+        }
+      },
+      {
+        "id": "examine_glass",
+        "text": "유리 조각과 붉은 자국을 살핀다.",
+        "conditions": {
+          "requiredTags": [],
+          "forbiddenTags": [],
+          "moneyMin": null
+        },
+        "result": {
+          "text": "유리는 두껍고, 가장자리는 둥근 그릇의 일부처럼 휘어 있다. 붉은 액체는 조각 안쪽에만 말라붙어 있다. 고개를 들자 골짜기로 이어지는 길에도 비슷한 유리 조각들이 햇빛을 받아 반짝인다. 어떤 그릇이 깨져야 이만한 조각이 나올지 짐작하기 어렵다.",
+          "battle": false,
+          "effects": {
+            "addTags": [],
+            "removeTags": [],
+            "fameChange": 0,
+            "reputationChange": 0,
+            "moneyChange": 0,
+            "revealGoalIds": [],
+            "arcTransition": null
+          }
+        }
+      }
+    ]
+  }
+}

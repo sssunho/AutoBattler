@@ -1,0 +1,71 @@
+{
+  "id": "outpost_old_emblem",
+  "title": "방패와 해님",
+  "description": "도시 밖의 옛 초소에는 깃발 대신 빨래가 걸려 있다. 화살을 쏘던 좁은 창 사이로 흰 홑이불이 펄럭이고, 아이들은 내려놓은 간판 주위에 모여 노란 물감을 휘젓는다.\n\n“여기에 해님을 그릴 거예요. 빨래가 잘 마르라고요.”\n\n문간에 앉은 늙은 파수꾼이 간판 한가운데의 희미한 방패 문양을 가리킨다.\n\n“지붕은 없어져도 저건 남았구나. 우리 부대 표식인데.”\n\n아이 하나가 붓을 멈춘다. 간판에는 그림을 두 개나 넣을 자리가 없어 보인다. 곧 아이들과 파수꾼의 시선이 우리에게 모인다.",
+  "arcId": null,
+  "goalId": null,
+  "eventType": "Normal",
+  "arcStage": null,
+  "conditions": {
+    "requiredTags": [],
+    "forbiddenTags": [],
+    "fameMin": null,
+    "fameMax": null,
+    "reputationMin": null,
+    "reputationMax": null,
+    "moneyMin": null,
+    "moneyMax": null,
+    "resolvedEventCountMin": null,
+    "resolvedEventCountMax": null,
+    "locations": [2]
+  },
+  "resolution": {
+    "type": "Choice",
+    "choices": [
+      {
+        "id": "restore_emblem",
+        "text": "방패 문양을 다시 또렷하게 칠하자.",
+        "conditions": {
+          "requiredTags": [],
+          "forbiddenTags": [],
+          "moneyMin": null
+        },
+        "result": {
+          "text": "우리는 닳아버린 선을 따라 방패를 다시 그린다. 아이들은 남은 노란 물감으로 방패 둘레에 작은 꽃을 빼곡히 찍는다.\n\n“우리 부대에는 저런 꽃이 없었는데.”\n\n파수꾼의 말에 아이가 붓을 턴다. “지금은 있잖아요.”\n\n파수꾼은 잠시 간판을 보더니 못을 가져온다. 우리가 길을 떠날 때, 꽃으로 둘러싸인 방패가 빨래줄 아래 다시 걸린다.",
+          "battle": false,
+          "effects": {
+            "addTags": [],
+            "removeTags": [],
+            "fameChange": 0,
+            "reputationChange": 0,
+            "moneyChange": 0,
+            "revealGoalIds": [],
+            "arcTransition": null
+          }
+        }
+      },
+      {
+        "id": "paint_sun",
+        "text": "멀리서도 보이는 커다란 해님이 좋겠어.",
+        "conditions": {
+          "requiredTags": [],
+          "forbiddenTags": [],
+          "moneyMin": null
+        },
+        "result": {
+          "text": "아이들이 간판 가득 노란 원을 칠한다. 옛 방패는 물감 아래로 사라지고, 둥근 얼굴 주위에 삐죽삐죽한 햇살이 돋는다.\n\n가만히 보던 파수꾼이 붓을 빌려 해님에게 커다란 콧수염을 그려준다.\n\n“이왕 바꾸는 거 좀 믿음직해야지.”\n\n아이들은 웃으며 간판을 들어 올린다. 우리가 뒤를 돌아보았을 때는 콧수염 난 해님이 초소 입구에서 빨래를 지키고 있다.",
+          "battle": false,
+          "effects": {
+            "addTags": [],
+            "removeTags": [],
+            "fameChange": 0,
+            "reputationChange": 0,
+            "moneyChange": 0,
+            "revealGoalIds": [],
+            "arcTransition": null
+          }
+        }
+      }
+    ]
+  }
+}

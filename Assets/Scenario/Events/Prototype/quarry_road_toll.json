@@ -1,0 +1,71 @@
+{
+  "id": "quarry_road_toll",
+  "title": "길을 판 자들",
+  "description": "버려진 채석장 바닥으로 수레길 하나가 나 있다. 강변을 따라 돌아가는 길보다 훨씬 짧아 보이지만, 깎다 만 석상 사이로 돌을 실은 수레가 길을 막고 있다. 수레 뒤에서 활을 든 사내들이 일어선다.\n\n우두머리가 바위를 두드리며 말한다. “우리가 치워 놓은 길이오. 지나가려면 길값을 내시오.”\n\n일꾼의 도구는 보이지 않는다. 대신 바위 뒤로 녹슨 창끝들이 움직인다.",
+  "arcId": null,
+  "goalId": null,
+  "eventType": "Normal",
+  "arcStage": null,
+  "conditions": {
+    "requiredTags": [],
+    "forbiddenTags": [],
+    "fameMin": null,
+    "fameMax": null,
+    "reputationMin": null,
+    "reputationMax": null,
+    "moneyMin": null,
+    "moneyMax": null,
+    "resolvedEventCountMin": null,
+    "resolvedEventCountMax": null,
+    "locations": [4]
+  },
+  "resolution": {
+    "type": "Choice",
+    "choices": [
+      {
+        "id": "pay_toll",
+        "text": "“길값은 여기 있다.” — 돈 10 지불",
+        "conditions": {
+          "requiredTags": [],
+          "forbiddenTags": [],
+          "moneyMin": 10
+        },
+        "result": {
+          "text": "우두머리가 돈을 세더니 우리 깃발을 가리킨다. “이 사람들은 받았다. 돌아올 때 또 세우지 마라.”\n\n산적들이 수레를 밀어 길을 연다. 누군가 뒤에서 웃지만, 더 요구하는 자는 없다.",
+          "battle": false,
+          "effects": {
+            "addTags": [],
+            "removeTags": [],
+            "fameChange": 0,
+            "reputationChange": 0,
+            "moneyChange": -10,
+            "revealGoalIds": [],
+            "arcTransition": null
+          }
+        }
+      },
+      {
+        "id": "drive_off_bandits",
+        "text": "“길을 막은 값부터 치러라.” — 전투",
+        "conditions": {
+          "requiredTags": [],
+          "forbiddenTags": [],
+          "moneyMin": null
+        },
+        "result": {
+          "text": "산적들이 무기를 버리고 채석장 비탈로 흩어진다. 남은 수레를 밀어내자 길이 드러난다. 뒤따라오던 짐꾼들이 고개를 숙여 인사한다. 이 길을 다시 열어 준 원정대의 이야기가 사람들의 입에 오를 것이다.",
+          "battle": true,
+          "effects": {
+            "addTags": [],
+            "removeTags": [],
+            "fameChange": 1,
+            "reputationChange": 0,
+            "moneyChange": 0,
+            "revealGoalIds": [],
+            "arcTransition": null
+          }
+        }
+      }
+    ]
+  }
+}

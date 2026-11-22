@@ -1,0 +1,71 @@
+{
+  "id": "giant_cabinet_keeper",
+  "title": "약장의 주인",
+  "description": "골짜기의 좁은 길을 빠져나오자 절벽의 정체가 드러난다. 동굴은 거대한 약장의 서랍칸이고 바위기둥은 손잡이다. 집채만 한 약병과 절구 사이에서 오우거들이 고개를 든다.\n\n가장 안쪽의 두목은 붉은 약액을 들이켜 팔의 상처를 아물게 한다. 다른 병을 마시자 목과 어깨가 돌처럼 단단해진다. 빈 병을 던진 두목이 서랍 입구를 막아선다.",
+  "arcId": null,
+  "goalId": null,
+  "eventType": "Normal",
+  "arcStage": null,
+  "conditions": {
+    "requiredTags": [],
+    "forbiddenTags": [],
+    "fameMin": null,
+    "fameMax": null,
+    "reputationMin": null,
+    "reputationMax": null,
+    "moneyMin": null,
+    "moneyMax": null,
+    "resolvedEventCountMin": null,
+    "resolvedEventCountMax": null,
+    "locations": [7]
+  },
+  "resolution": {
+    "type": "Choice",
+    "choices": [
+      {
+        "id": "front_assault",
+        "text": "약병 사이를 뚫고 두목에게 맞선다. — 전투",
+        "conditions": {
+          "requiredTags": [],
+          "forbiddenTags": [],
+          "moneyMin": null
+        },
+        "result": {
+          "text": "깨진 약병 사이로 두목이 쓰러진다. 남은 오우거들이 흩어진 뒤 서랍 안쪽을 살피자, 재료 그림과 배합 비율이 새겨진 석판이 나온다.\n\n석판의 기록을 옮겨 적고, 봉인된 병에서 온전한 약액 표본을 확보한다. 이곳에는 약을 만드는 방법까지 남아 있었다. 이 비율을 인간에게 맞는 용량으로 줄이면 도시에서도 같은 약을 만들 수 있을 것이다.",
+          "battle": true,
+          "effects": {
+            "addTags": ["GiantApothecaryRecordsRecovered"],
+            "removeTags": [],
+            "fameChange": 0,
+            "reputationChange": 0,
+            "moneyChange": 0,
+            "revealGoalIds": [],
+            "arcTransition": null
+          }
+        }
+      },
+      {
+        "id": "service_ledge",
+        "text": "도면에서 확인한 받침턱을 따라 두목의 옆으로 접근한다. — 전투",
+        "conditions": {
+          "requiredTags": ["KnowsCliffStructure"],
+          "forbiddenTags": [],
+          "moneyMin": null
+        },
+        "result": {
+          "text": "받침턱에서 올라선 원정대와 맞붙은 두목이 서랍 가장자리에 쓰러진다. 남은 오우거들이 달아난 뒤 안쪽을 살피자, 재료 그림과 배합 비율이 새겨진 석판이 나온다.\n\n석판의 기록을 옮겨 적고, 봉인된 병에서 온전한 약액 표본을 확보한다. 거대한 서랍의 구조를 읽어 낸 것처럼, 이 제법도 인간에게 맞는 용량으로 옮길 수 있을 것이다. 도시로 가져갈 것은 이제 소문만이 아니다.",
+          "battle": true,
+          "effects": {
+            "addTags": ["GiantApothecaryRecordsRecovered"],
+            "removeTags": [],
+            "fameChange": 0,
+            "reputationChange": 0,
+            "moneyChange": 0,
+            "revealGoalIds": [],
+            "arcTransition": null
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "id": "opening_bottle_rumor",
+  "title": "집채만 한 병",
+  "description": "대도시의 주점은 떠날 사람과 돌아온 사람으로 북적인다. 탁자 아래로 배낭이 오가고, 벽에 걸린 지도 앞에서는 서로 다른 길을 가리키는 손들이 겹친다.\n\n짐꾼 하나가 양팔을 벌린 채 같은 이야기를 세 번째 하고 있다.\n\n“병이 이만했다니까.”\n\n맞은편에서 웃음이 터지자 짐꾼이 고개를 젓는다.\n\n“아니, 입구가 이만했다고. 병은 저 집보다 컸어. 북쪽 골짜기에 처박혀 있었지.”\n\n주점 주인이 우리 쪽으로 지도를 밀어놓는다. “그쪽을 재던 측량사도 이상한 얘길 했어. 절벽의 구멍들이 자로 잰 것처럼 나란하다더군.”",
+  "arcId": null,
+  "goalId": null,
+  "eventType": "Opening",
+  "arcStage": null,
+  "conditions": {
+    "requiredTags": [],
+    "forbiddenTags": [],
+    "fameMin": null,
+    "fameMax": null,
+    "reputationMin": null,
+    "reputationMax": null,
+    "moneyMin": null,
+    "moneyMax": null,
+    "resolvedEventCountMin": null,
+    "resolvedEventCountMax": null,
+    "locations": [1]
+  },
+  "resolution": {
+    "type": "Automatic",
+    "result": {
+      "text": "짐꾼은 지도에 골짜기의 대략적인 위치를 짚어준다. 누가 그런 병을 만들었는지, 무엇을 담았는지는 그도 모른다.\n\n우리는 표시를 옮겨 적고 짐을 챙긴다. 주점 문을 열자 아침 장이 선 거리와 그 너머의 성문이 보인다. 집채만 한 병이 있다는 골짜기를 향해 원정을 시작한다.",
+      "battle": false,
+      "effects": {
+        "addTags": [],
+        "removeTags": [],
+        "fameChange": 0,
+        "reputationChange": 0,
+        "moneyChange": 0,
+        "revealGoalIds": [],
+        "arcTransition": null
+      }
+    }
+  }
+}
