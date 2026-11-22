@@ -1,4 +1,4 @@
-namespace AutoBattler.HexGrid
+namespace RaggedBanner.HexGrid
 {
     public static class HexMath
     {

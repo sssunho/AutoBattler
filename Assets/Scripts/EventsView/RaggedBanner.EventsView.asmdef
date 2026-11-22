@@ -1,0 +1,20 @@
+{
+  "name": "RaggedBanner.EventsView",
+  "rootNamespace": "RaggedBanner.Events.Unity",
+  "references": [
+    "RaggedBanner.Events",
+    "RaggedBanner.GameState",
+    "RaggedBanner.WorldMap",
+    "RaggedBanner.WorldMapView",
+    "UnityEngine.UI"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace AutoBattler.HexGrid.Unity
+namespace RaggedBanner.HexGrid.Unity
 {
     [RequireComponent(typeof(HexMapView))]
     public sealed class HexMapClickLogger : MonoBehaviour

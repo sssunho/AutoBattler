@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace AutoBattler.HexGrid.Unity
+namespace RaggedBanner.HexGrid.Unity
 {
     public static class HexLayout
     {

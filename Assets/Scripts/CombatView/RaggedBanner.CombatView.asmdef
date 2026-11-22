@@ -2,9 +2,14 @@
   "name": "RaggedBanner.CombatView",
   "rootNamespace": "RaggedBanner.Combat.Unity",
   "references": [
+    "RaggedBanner.AnimationData",
+    "RaggedBanner.AnimationPlayback",
+    "RaggedBanner.Mercenaries",
+    "RaggedBanner.MercenaryData",
+    "RaggedBanner.BattleMapData",
     "RaggedBanner.Combat",
-    "AutoBattler.HexGrid",
-    "AutoBattler.HexGridView",
+    "RaggedBanner.HexGrid",
+    "RaggedBanner.HexGridView",
     "UnityEngine.UI",
     "Unity.InputSystem"
   ],

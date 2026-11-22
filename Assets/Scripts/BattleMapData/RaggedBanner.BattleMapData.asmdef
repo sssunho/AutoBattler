@@ -1,0 +1,18 @@
+{
+  "name": "RaggedBanner.BattleMapData",
+  "rootNamespace": "RaggedBanner.BattleMaps",
+  "references": [
+    "RaggedBanner.Combat",
+    "RaggedBanner.HexGrid",
+    "RaggedBanner.Mercenaries"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

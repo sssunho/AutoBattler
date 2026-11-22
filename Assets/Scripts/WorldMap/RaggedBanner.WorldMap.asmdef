@@ -1,0 +1,16 @@
+{
+  "name": "RaggedBanner.WorldMap",
+  "rootNamespace": "RaggedBanner.WorldMap",
+  "references": [
+    "RaggedBanner.GameState"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}

@@ -1,6 +1,6 @@
 using System;
 
-namespace AutoBattler.HexGrid
+namespace RaggedBanner.HexGrid
 {
     public sealed class HexMap
     {

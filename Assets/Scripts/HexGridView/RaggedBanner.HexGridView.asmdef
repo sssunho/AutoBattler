@@ -1,0 +1,16 @@
+{
+    "name": "RaggedBanner.HexGridView",
+    "rootNamespace": "RaggedBanner.HexGrid.Unity",
+    "references": [
+        "RaggedBanner.HexGrid"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

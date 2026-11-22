@@ -3,8 +3,8 @@
     "rootNamespace": "AutoBattler.Combat.Unity",
     "references": [
         "AutoBattler.Combat",
-        "AutoBattler.HexGrid",
-        "AutoBattler.HexGridView",
+        "RaggedBanner.HexGrid",
+        "RaggedBanner.HexGridView",
         "UnityEngine.UI"
     ],
     "includePlatforms": [],

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using AutoBattler.HexGrid;
-using AutoBattler.HexGrid.Unity;
+using RaggedBanner.HexGrid;
+using RaggedBanner.HexGrid.Unity;
 using UnityEngine;
 using UnityEngine.EventSystems;
 

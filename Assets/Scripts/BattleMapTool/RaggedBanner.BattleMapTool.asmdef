@@ -1,0 +1,22 @@
+{
+  "name": "RaggedBanner.BattleMapTool",
+  "rootNamespace": "RaggedBanner.BattleMaps.Authoring",
+  "references": [
+    "RaggedBanner.BattleMapData",
+    "RaggedBanner.HexGrid",
+    "RaggedBanner.HexGridView",
+    "RaggedBanner.Mercenaries",
+    "RaggedBanner.Combat",
+    "RaggedBanner.CombatView",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

@@ -1,6 +1,6 @@
 using System;
 
-namespace AutoBattler.HexGrid
+namespace RaggedBanner.HexGrid
 {
     public readonly struct HexCoordinate : IEquatable<HexCoordinate>
     {

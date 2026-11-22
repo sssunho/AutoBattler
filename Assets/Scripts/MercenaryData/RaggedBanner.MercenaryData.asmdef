@@ -1,0 +1,17 @@
+{
+  "name": "RaggedBanner.MercenaryData",
+  "rootNamespace": "RaggedBanner.MercenaryData",
+  "references": [
+    "RaggedBanner.Mercenaries",
+    "RaggedBanner.Combat"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

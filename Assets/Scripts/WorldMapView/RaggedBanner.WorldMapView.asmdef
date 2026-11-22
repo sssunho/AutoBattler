@@ -1,0 +1,21 @@
+{
+  "name": "RaggedBanner.WorldMapView",
+  "rootNamespace": "RaggedBanner.WorldMap.Unity",
+  "references": [
+    "RaggedBanner.GameState",
+    "RaggedBanner.Mercenaries",
+    "RaggedBanner.MercenaryData",
+    "RaggedBanner.WorldMap",
+    "UnityEngine.UI",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

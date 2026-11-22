@@ -1,4 +1,4 @@
-using AutoBattler.HexGrid;
+using RaggedBanner.HexGrid;
 
 namespace AutoBattler.Combat.Unity
 {

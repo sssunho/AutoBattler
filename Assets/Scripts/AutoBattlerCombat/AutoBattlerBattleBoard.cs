@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using AutoBattler.HexGrid;
+using RaggedBanner.HexGrid;
 
 namespace AutoBattler.Combat
 {

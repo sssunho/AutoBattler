@@ -2,7 +2,8 @@
   "name": "RaggedBanner.Combat",
   "rootNamespace": "RaggedBanner.Combat",
   "references": [
-    "AutoBattler.HexGrid"
+    "RaggedBanner.Mercenaries",
+    "RaggedBanner.HexGrid"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

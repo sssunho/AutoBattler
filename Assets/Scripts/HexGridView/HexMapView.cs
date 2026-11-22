@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace AutoBattler.HexGrid.Unity
+namespace RaggedBanner.HexGrid.Unity
 {
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public sealed class HexMapView : MonoBehaviour
